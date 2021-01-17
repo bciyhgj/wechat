@@ -16,15 +16,37 @@ class WeChatController extends Controller
     {
         Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
 
-        $app    = app('wechat.official_account');
+        $app = app('wechat.official_account');
 
         //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
         $user = $app->user;
 
         // 接受用户发送的信息
         $app->server->push(function ($message) use ($app, $user) {
+            // 这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）
             switch ($message['MsgType']) {
                 case 'event':
+                    // 请求消息基本属性(以下所有消息都有的基本属性)：
+                    // $message['ToUserName']    接收方帐号（该公众号 ID）
+                    // $message['FromUserName']  发送方帐号（OpenID, 代表用户的唯一标识）
+                    // $message['CreateTime']    消息创建时间（时间戳）
+                    // $message['MsgId']         消息 ID（64位整型）
+
+                    // 事件：
+                    // - Event       事件类型 （如：subscribe(订阅)、unsubscribe(取消订阅) ...， CLICK 等）
+
+                    // # 扫描带参数二维码事件
+                    // - EventKey    事件KEY值，比如：qrscene_123123，qrscene_为前缀，后面为二维码的参数值
+                    // - Ticket      二维码的 ticket，可用来换取二维码图片
+
+                    // # 上报地理位置事件
+                    // - Latitude    23.137466   地理位置纬度
+                    // - Longitude   113.352425  地理位置经度
+                    // - Precision   119.385040  地理位置精度
+
+                    // # 自定义菜单事件
+                    // - EventKey    事件KEY值，与自定义菜单接口中KEY值对应，如：CUSTOM_KEY_001, www.qq.com
+
                     $user_openid = $message['FromUserName'];
                     if ($message['Event'] == 'subscribe') {
                         //下面是你点击关注时，进行的操作
@@ -56,36 +78,81 @@ class WeChatController extends Controller
                     return '收到事件消息';
                     break;
                 case 'text':
-                    return '收到文字消息';
+                    // 文本：
+                    // - MsgType  text
+                    // - Content  文本消息内容
+                    return '收到文字消息' . ':' . $message['Content'];
                     break;
                 case 'image':
-                    return '收到图片消息';
+                    // 图片：
+                    // - MsgType  image
+                    // - MediaId        图片消息媒体id，可以调用多媒体文件下载接口拉取数据。
+                    // - PicUrl   图片链接
+                    return '收到图片消息' . '-' . 'MediaId' . ':' . $message['MediaId'] . 'PicUrl' . ':' . $message['PicUrl'];
                     break;
                 case 'voice':
-                    return '收到语音消息';
+                    // 语音：
+                    // - MsgType        voice
+                    // - MediaId        语音消息媒体id，可以调用多媒体文件下载接口拉取数据。
+                    // - Format         语音格式，如 amr，speex 等
+                    // - Recognition * 开通语音识别后才有
+
+                    // > 请注意，开通语音识别后，用户每次发送语音给公众号时，微信会在推送的语音消息XML数据包中，增加一个 `Recongnition` 字段
+                    return '收到语音消息' . ':' . $message['Recongnition'];
                     break;
                 case 'video':
+                    // 视频：
+                    // - MsgType       video
+                    // - MediaId       视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
+                    // - ThumbMediaId  视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
                     return '收到视频消息';
                     break;
+                case 'shortvideo':
+                    // 小视频：
+                    // - MsgType     shortvideo
+                    // - MediaId     视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
+                    // - ThumbMediaId    视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
+                    return '收到小视频消息';
                 case 'location':
-                    return '收到坐标消息';
+                    // 地理位置：
+                    // $message->MsgType     location
+                    // $message->Location_X  地理位置纬度
+                    // $message->Location_Y  地理位置经度
+                    // $message->Scale       地图缩放大小
+                    // $message->Label       地理位置信息
+                    return '收到坐标消息' . '-' . '地理位置纬度' . ':' . $message['Location_X'] . '地理位置经度' . ':' . $message['Location_Y'] . '地图缩放大小' . ':' . $message['Scale'] . '地理位置信息' . ':' . $message['Label'];
                     break;
                 case 'link':
-                    return '收到链接消息';
+                    // 链接：
+                    // $message->MsgType      link
+                    // $message->Title        消息标题
+                    // $message->Description  消息描述
+                    // $message->Url          消息链接
+                    return '收到链接消息' . '-' . '消息标题' . ':' . $message['Title'] . '消息描述' . ':' . $message['Description'] . '消息链接' . ':' . $message['Url'];
                     break;
                 case 'file':
+                    // 文件：
+                    // $message->MsgType      file
+                    // $message->Title        文件名
+                    // $message->Description 文件描述，可能为null
+                    // $message->FileKey      文件KEY
+                    // $message->FileMd5      文件MD5值
+                    // $message->FileTotalLen 文件大小，单位字节
                     return '收到文件消息';
                 // ... 其它消息
                 default:
                     return '收到其它消息';
                     break;
             }
-            return "欢迎关注 overtrue！";
+            return "欢迎关注 田大爷！";
         });
+
+        // 某些情况，我们需要直接使用 $message 参数，那么怎么在 push 的闭包外调用呢？
+        // $message = $server->getMessage();
 
         // 清理接口调用次数
         // $app->base->clearQuota();
-        
+
         // 获取微信服务器 IP (或IP段)
         // $app->base->getValidIps();
 
@@ -108,7 +175,6 @@ class WeChatController extends Controller
         //     echo $method->getName() . '<br />';
         // }
         // dd();
-
 
         //接收用户发送的消息
         $app->server->getMessage(function ($message) use ($app) {
