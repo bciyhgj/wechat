@@ -18,6 +18,10 @@ Route::get('/', function () {
 // 微信
 Route::any('/wechat', 'WeChat\WeChatController@serve');
 
-Route::get('/test', function() {
-	dd('test');
+Route::group(['middleware' => ['web', 'wechat.oauth']], function () {
+    Route::get('/user', function () {
+        $user = session('wechat.oauth_user'); // 拿到授权用户资料
+
+        dd($user);
+    });
 });
