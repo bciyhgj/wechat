@@ -17,3 +17,7 @@ Route::get('/', function () {
 
 // 微信
 Route::any('/wechat', 'WeChat\WeChatController@serve');
+
+Route::get('/test', function() {
+	dd('test');
+});
