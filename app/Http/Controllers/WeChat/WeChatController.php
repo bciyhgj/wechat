@@ -16,10 +16,10 @@ class WeChatController extends Controller
     {
         Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
 
-        // $app    = app('wechat.official_account');
-        // $app->server->push(function ($message) {
-        //     return "欢迎关注 overtrue！";
-        // });
+        $app    = app('wechat.official_account');
+        $app->server->push(function ($message) {
+            return "欢迎关注 overtrue！";
+        });
 
         //从项目实例中得到一个服务端应用实例
         // $server = $app->server;
@@ -138,6 +138,8 @@ class WeChatController extends Controller
         //响应输出
         // $server->serve()->send();
 
+        // $response = $app->server->serve();
+        // return $response->send();
         return $app->server->serve();
     }
 }
