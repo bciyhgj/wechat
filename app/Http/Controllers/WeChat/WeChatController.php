@@ -98,7 +98,7 @@ class WeChatController extends Controller
                     // - Recognition * 开通语音识别后才有
 
                     // > 请注意，开通语音识别后，用户每次发送语音给公众号时，微信会在推送的语音消息XML数据包中，增加一个 `Recongnition` 字段
-                    return '收到语音消息' . ':' . $message['Recongnition'];
+                    return '收到语音消息' . ':' . $message['MediaId'];
                     break;
                 case 'video':
                     // 视频：
