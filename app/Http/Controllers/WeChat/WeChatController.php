@@ -17,11 +17,81 @@ class WeChatController extends Controller
         Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
 
         $app    = app('wechat.official_account');
-        $app->server->push(function ($message) {
+
+        //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
+        $user = $app->user;
+        
+        // 接受用户发送的信息
+        $app->server->push(function ($message) use ($app, $user) {
+            switch ($message['MsgType']) {
+                case 'event':
+                    if ($message->MsgType == 'event') {
+                        $user_openid = $message->FromUserName;
+                        if ($message->Event == 'subscribe') {
+                            //下面是你点击关注时，进行的操作
+                            $user_info['unionid']        = $message->ToUserName;
+                            $user_info['openid']         = $user_openid;
+                            $userService                 = $app->user;
+                            $user                        = $userService->get($user_info['openid']);
+                            $user_info['subscribe_time'] = $user['subscribe_time'];
+                            $user_info['nickname']       = $user['nickname'];
+                            $user_info['avatar']         = $user['headimgurl'];
+                            $user_info['sex']            = $user['sex'];
+                            $user_info['province']       = $user['province'];
+                            $user_info['city']           = $user['city'];
+                            $user_info['country']        = $user['country'];
+                            $user_info['is_subscribe']   = 1;
+                            // if (WxStudent::weixin_attention($user_info)) {
+                            //     return '欢迎关注';
+                            // } else {
+                            //     return '您的信息由于某种原因没有保存，请重新关注';
+                            // }
+                            return '欢迎关注';
+                        } else if ($message->Event == 'unsubscribe') {
+                            //取消关注时执行的操作，（注意下面返回的信息用户不会收到，因为你已经取消关注，但别的操作还是会执行的<如：取消关注的时候，要把记录该用户从记录微信用户信息的表中删掉>）
+                            // if (WxStudent::weixin_cancel_attention($user_openid)) {
+                            // return '已取消关注';
+                            // }
+                            return '已取消关注';
+                        }
+                    }
+                    return '收到事件消息';
+                    break;
+                case 'text':
+                    return '收到文字消息';
+                    break;
+                case 'image':
+                    return '收到图片消息';
+                    break;
+                case 'voice':
+                    return '收到语音消息';
+                    break;
+                case 'video':
+                    return '收到视频消息';
+                    break;
+                case 'location':
+                    return '收到坐标消息';
+                    break;
+                case 'link':
+                    return '收到链接消息';
+                    break;
+                case 'file':
+                    return '收到文件消息';
+                // ... 其它消息
+                default:
+                    return '收到其它消息';
+                    break;
+            }
             return "欢迎关注 overtrue！";
         });
 
-        //从项目实例中得到一个服务端应用实例
+        // 清理接口调用次数
+        // $app->base->clearQuota();
+        
+        // 获取微信服务器 IP (或IP段)
+        // $app->base->getValidIps();
+
+        // 从项目实例中得到一个服务端应用实例
         // $server = $app->server;
         // $ref    = new \ReflectionClass(get_class($server));
         // $consts = $ref->getConstants(); //返回所有常量名和值
@@ -41,40 +111,10 @@ class WeChatController extends Controller
         // }
         // dd();
 
-        //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
-        // $user = $app->user;
+
         //接收用户发送的消息
         $app->server->getMessage(function ($message) use ($app) {
-            if ($message->MsgType == 'event') {
-                $user_openid = $message->FromUserName;
-                if ($message->Event == 'subscribe') {
-                    //下面是你点击关注时，进行的操作
-                    $user_info['unionid']        = $message->ToUserName;
-                    $user_info['openid']         = $user_openid;
-                    $userService                 = $app->user;
-                    $user                        = $userService->get($user_info['openid']);
-                    $user_info['subscribe_time'] = $user['subscribe_time'];
-                    $user_info['nickname']       = $user['nickname'];
-                    $user_info['avatar']         = $user['headimgurl'];
-                    $user_info['sex']            = $user['sex'];
-                    $user_info['province']       = $user['province'];
-                    $user_info['city']           = $user['city'];
-                    $user_info['country']        = $user['country'];
-                    $user_info['is_subscribe']   = 1;
-                    // if (WxStudent::weixin_attention($user_info)) {
-                    //     return '欢迎关注';
-                    // } else {
-                    //     return '您的信息由于某种原因没有保存，请重新关注';
-                    // }
-                    return '欢迎关注';
-                } else if ($message->Event == 'unsubscribe') {
-                    //取消关注时执行的操作，（注意下面返回的信息用户不会收到，因为你已经取消关注，但别的操作还是会执行的<如：取消关注的时候，要把记录该用户从记录微信用户信息的表中删掉>）
-                    // if (WxStudent::weixin_cancel_attention($user_openid)) {
-                    // return '已取消关注';
-                    // }
-                    return '已取消关注';
-                }
-            }
+
         });
 
         // $server->setMessageHandler(function ($message) use ($user) {
@@ -139,7 +179,10 @@ class WeChatController extends Controller
         // $server->serve()->send();
 
         // $response = $app->server->serve();
-        // return $response->send();
+        // $response->send();
+        // 我们的 $app->server->serve() 就是执行服务端业务了，那么它的返回值是一个 Symfony\Component\HttpFoundation\Response 实例。
+        // 我这里是直接调用了它的 send() 方法，它就是直接输出（echo）了，我们在一些框架就不能直接输出了，那你就直接拿到 Response 实例后做相应的操作即可，比如 Laravel 里你就可以直接 return $app->server->serve();
+
         return $app->server->serve();
     }
 }
