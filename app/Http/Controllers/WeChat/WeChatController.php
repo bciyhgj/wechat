@@ -16,22 +16,40 @@ class WeChatController extends Controller
     {
         Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
 
-        $app = app('wechat.official_account');
+        $app    = app('wechat.official_account');
         $app->server->push(function ($message) {
             return "欢迎关注 overtrue！";
         });
 
         //从项目实例中得到一个服务端应用实例
-        $server = $app->server;
+        // $server = $app->server;
+        // $ref    = new \ReflectionClass(get_class($server));
+        // $consts = $ref->getConstants(); //返回所有常量名和值
+        // echo "----------------consts:---------------" . '<br />';
+        // foreach ($consts as $key => $val) {
+        //     echo "$key : $val" . '<br />';
+        // }
+        // $props = $ref->getDefaultProperties(); //返回类中所有属性
+        // echo "--------------------props:--------------" . '<br />';
+        // foreach ($props as $key => $val) {
+        //     echo "$key : $val" . '<br />'; // 属性名和属性值
+        // }
+        // $methods = $ref->getMethods(); //返回类中所有方法
+        // echo "-----------------methods:---------------" . '<br />';
+        // foreach ($methods as $method) {
+        //     echo $method->getName() . '<br />';
+        // }
+        // dd();
+
         //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
         // $user = $app->user;
         //接收用户发送的消息
-        $app->server->setMessageHandler(function ($message) use ($app) {
+        $app->server->getMessage(function ($message) use ($app) {
             if ($message->MsgType == 'event') {
                 $user_openid = $message->FromUserName;
                 if ($message->Event == 'subscribe') {
                     //下面是你点击关注时，进行的操作
-                    $user_info['unionid']       = $message->ToUserName;
+                    $user_info['unionid']        = $message->ToUserName;
                     $user_info['openid']         = $user_openid;
                     $userService                 = $app->user;
                     $user                        = $userService->get($user_info['openid']);
@@ -52,7 +70,7 @@ class WeChatController extends Controller
                 } else if ($message->Event == 'unsubscribe') {
                     //取消关注时执行的操作，（注意下面返回的信息用户不会收到，因为你已经取消关注，但别的操作还是会执行的<如：取消关注的时候，要把记录该用户从记录微信用户信息的表中删掉>）
                     // if (WxStudent::weixin_cancel_attention($user_openid)) {
-                        // return '已取消关注';
+                    // return '已取消关注';
                     // }
                     return '已取消关注';
                 }
