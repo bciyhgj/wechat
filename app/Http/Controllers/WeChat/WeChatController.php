@@ -120,7 +120,8 @@ class WeChatController extends Controller
                     // - Content  文本消息内容
                     
                     $responseContent = '';
-                    switch (trim($message['Content'])) {
+                    $content = trim($message['Content']);
+                    switch ($content) {
                         case '菜单':
                             # code...
                             break;
