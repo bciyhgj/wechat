@@ -179,15 +179,15 @@ class WeChatController extends Controller
                     // 获取到用户发送的文本内容
                     //发送到图灵机器人接口
                     $url = "http://www.tuling123.com/openapi/api?key=c407416112434017a7e3431bdcf7b417&info=" . $content;
-                    //获取图灵机器人返回的内容
+                    // 获取图灵机器人返回的内容
                     $content = file_get_contents($url);
-                    //对内容json解码
+                    // 对内容json解码
                     $content = json_decode($content);
 
                     // 文本消息
                     // 属性列表：
                     // - content 文本内容
-                    return new Text($content);
+                    return new Text($content->text);
 
                     // 其他用法
                     // $text = new Text('您好！overtrue。');
@@ -245,7 +245,7 @@ class WeChatController extends Controller
                     // - description 描述
                     // - media_id 媒体资源 ID
                     // - thumb_media_id 封面资源 ID
-                    $mediaId = $message->MediaId;
+                    $mediaId = $message['MediaId'];
                     return new Video($mediaId);
 
                     return '收到视频消息';
