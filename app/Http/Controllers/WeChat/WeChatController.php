@@ -187,7 +187,7 @@ class WeChatController extends Controller
                     // 文本消息
                     // 属性列表：
                     // - content 文本内容
-                    return new Text(['content' => $content]);
+                    return new Text($content);
 
                     // 其他用法
                     // $text = new Text('您好！overtrue。');
@@ -211,7 +211,7 @@ class WeChatController extends Controller
                     // 属性列表：
                     // - media_id 媒体资源 ID
                     $mediaId = $message['MediaId'];
-                    return new Image(['media_id' => $mediaId]);
+                    return new Image($mediaId);
 
                     return '收到图片消息' . '-' . 'MediaId' . ':' . $message['MediaId'] . 'PicUrl' . ':' . $message['PicUrl'];
                     break;
@@ -228,7 +228,7 @@ class WeChatController extends Controller
                     // 属性列表：
                     // - media_id 媒体资源 ID
                     $mediaId = $message['MediaId'];
-                    return new Voice(['media_id' => $mediaId]);
+                    return new Voice($mediaId);
 
                     return '收到语音消息' . ':' . $message['MediaId'];
                     break;
@@ -246,7 +246,7 @@ class WeChatController extends Controller
                     // - media_id 媒体资源 ID
                     // - thumb_media_id 封面资源 ID
                     $mediaId = $message->MediaId;
-                    return new Video(['media_id' => $mediaId]);
+                    return new Video($mediaId);
 
                     return '收到视频消息';
                     break;
@@ -269,7 +269,7 @@ class WeChatController extends Controller
 
                     // 坐标消息
                     // 微信目前不支持回复坐标消息
-                    return new Text(['content' => $message['Label']]);
+                    return new Text($message['Label']);
 
                     return '收到坐标消息' . '-' . '地理位置纬度' . ':' . $message['Location_X'] . '地理位置经度' . ':' . $message['Location_Y'] . '地图缩放大小' . ':' . $message['Scale'] . '地理位置信息' . ':' . $message['Label'];
                     break;
@@ -284,7 +284,7 @@ class WeChatController extends Controller
                     // 链接消息
                     // 微信目前不支持回复链接消息
                     $description = $message['Description'];
-                    return new Text(['content' => $description]);
+                    return new Text($description);
 
                     return '收到链接消息' . '-' . '消息标题' . ':' . $message['Title'] . '消息描述' . ':' . $message['Description'] . '消息链接' . ':' . $message['Url'];
                     break;
@@ -311,7 +311,10 @@ class WeChatController extends Controller
 
         // 某些情况，我们需要直接使用 $message 参数，那么怎么在 push 的闭包外调用呢？
         // $message = $server->getMessage();
-
+        
+        /**
+         * 基础接口
+         */
         // 清理接口调用次数
         // $app->base->clearQuota();
 
