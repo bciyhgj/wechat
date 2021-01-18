@@ -169,8 +169,8 @@ class WeChatController extends Controller
                             break;
 
                         case '文本消息群发':
-                            Log::info($app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]));
-                            $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]);
+                            Log::info($app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]));
+                            $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]);
                             $responseContent = '文本消息群发';
                             break;
 
