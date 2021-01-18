@@ -25,7 +25,7 @@ class WeChatController extends Controller
             [
                 "type" => "click",
                 "name" => "今日歌曲",
-                "key"  => "V1001_TODAY_MUSIC"
+                "key"  => "TODAY_MUSIC"
             ],
             [
                 "name"       => "菜单",
@@ -43,7 +43,7 @@ class WeChatController extends Controller
                     [
                         "type" => "click",
                         "name" => "赞一下我们",
-                        "key" => "V1001_GOOD"
+                        "key" => "ZAN"
                     ],
                 ],
             ],
@@ -147,6 +147,14 @@ class WeChatController extends Controller
                         case 'ip':
                             // 获取微信服务器 IP (或IP段)
                             $responseContent = implode(",", $app->base->getValidIps());
+                            break;
+
+                        case 'TODAY_MUSIC':
+                            $responseContent = '一首凉凉送给你';
+                            break;
+
+                        case 'ZAN':
+                            $responseContent = '赞一下';
                             break;
 
                         default:
