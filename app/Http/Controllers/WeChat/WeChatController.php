@@ -4,6 +4,10 @@ namespace App\Http\Controllers\WeChat;
 
 use App\Http\Controllers\Controller;
 use Log;
+use EasyWeChat\Kernel\Messages\Text;
+use EasyWeChat\Kernel\Messages\Image;
+use EasyWeChat\Kernel\Messages\Voice;
+use EasyWeChat\Kernel\Messages\Video;
 
 class WeChatController extends Controller
 {
@@ -14,18 +18,21 @@ class WeChatController extends Controller
      */
     public function serve()
     {
-        Log::info('request arrived.'); # 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
+        // 注意：Log 为 Laravel 组件，所以它记的日志去 Laravel 日志看，而不是 EasyWeChat 日志
+        Log::info('request arrived.');
 
+        // 创建公众号服务
+        // $app = Factory::officialAccount($config);
         $app = app('wechat.official_account');
 
         /**
-         * 菜单
+         * 自定义菜单
          */
         $buttons = [
             [
                 "type" => "click",
                 "name" => "今日歌曲",
-                "key"  => "TODAY_MUSIC"
+                "key"  => "TODAY_MUSIC",
             ],
             [
                 "name"       => "菜单",
@@ -33,17 +40,17 @@ class WeChatController extends Controller
                     [
                         "type" => "view",
                         "name" => "搜索",
-                        "url"  => "http://www.soso.com/"
+                        "url"  => "http://www.soso.com/",
                     ],
                     [
                         "type" => "view",
                         "name" => "视频",
-                        "url"  => "http://v.qq.com/"
+                        "url"  => "http://v.qq.com/",
                     ],
                     [
                         "type" => "click",
                         "name" => "赞一下我们",
-                        "key" => "ZAN"
+                        "key"  => "ZAN",
                     ],
                 ],
             ],
@@ -61,7 +68,7 @@ class WeChatController extends Controller
             // $message['FromUserName']  发送方帐号（OpenID, 代表用户的唯一标识）
             // $message['CreateTime']    消息创建时间（时间戳）
             // $message['MsgId']         消息 ID（64位整型）
-            
+
             $toUserName = $message['ToUserName'];
             $userOpenid = $message['FromUserName'];
             $createTime = $message['CreateTime'];
@@ -85,6 +92,7 @@ class WeChatController extends Controller
                     // - EventKey    事件KEY值，与自定义菜单接口中KEY值对应，如：CUSTOM_KEY_001, www.qq.com
 
                     $user_openid = $message['FromUserName'];
+                    // 事件有点击菜单、关注、取消关注、扫码等
                     if ($message['Event'] == 'subscribe') {
                         //下面是你点击关注时，进行的操作
                         $user_info['unionid']        = $message['ToUserName'];
@@ -116,13 +124,14 @@ class WeChatController extends Controller
                     }
                     return '收到事件消息';
                     break;
+
                 case 'text':
                     // 文本：
                     // - MsgType  text
                     // - Content  文本消息内容
-                    
+
                     $responseContent = '';
-                    $content = trim($message['Content']);
+                    $content         = trim($message['Content']);
                     switch ($content) {
                         case '菜单':
                             $responseContent = '菜单菜单';
@@ -134,10 +143,10 @@ class WeChatController extends Controller
 
                             // 在推送信息中如果需要换行可以使用\\n(双斜杠n)来实现
                             $app->template_message->send([
-                                'touser' => $userOpenid,
+                                'touser'      => $userOpenid,
                                 'template_id' => 'hMaxKs6qJwtMeaWj2rWJzYlxJYr8MADVUdfOH2BIxGE',
-                                'url' => 'http://baidu.com',
-                                'data' => [
+                                'url'         => 'http://baidu.com',
+                                'data'        => [
                                     'name' => ['value' => '田大爷', 'color' => '#f4645f'],
                                 ],
                             ]);
@@ -167,38 +176,89 @@ class WeChatController extends Controller
                         return $responseContent;
                     }
 
+                    // 获取到用户发送的文本内容
+                    //发送到图灵机器人接口
+                    $url = "http://www.tuling123.com/openapi/api?key=c407416112434017a7e3431bdcf7b417&info=" . $content;
+                    //获取图灵机器人返回的内容
+                    $content = file_get_contents($url);
+                    //对内容json解码
+                    $content = json_decode($content);
+
+                    // 文本消息
+                    // 属性列表：
+                    // - content 文本内容
+                    return new Text(['content' => $content]);
+
+                    // 其他用法
+                    // $text = new Text('您好！overtrue。');
+                    // // or
+                    // $text = new Text();
+                    // $text->content = '您好！overtrue。';
+                    // // or
+                    // $text = new Text();
+                    // $text->setAttribute('content', '您好！overtrue。');
+
                     return '收到文字消息' . ':' . $message['Content'];
                     break;
+
                 case 'image':
                     // 图片：
                     // - MsgType  image
                     // - MediaId        图片消息媒体id，可以调用多媒体文件下载接口拉取数据。
                     // - PicUrl   图片链接
+
+                    // 图片消息
+                    // 属性列表：
+                    // - media_id 媒体资源 ID
+                    $mediaId = $message['MediaId'];
+                    return new Image(['media_id' => $mediaId]);
+
                     return '收到图片消息' . '-' . 'MediaId' . ':' . $message['MediaId'] . 'PicUrl' . ':' . $message['PicUrl'];
                     break;
+
                 case 'voice':
                     // 语音：
                     // - MsgType        voice
                     // - MediaId        语音消息媒体id，可以调用多媒体文件下载接口拉取数据。
                     // - Format         语音格式，如 amr，speex 等
                     // - Recognition * 开通语音识别后才有
-
                     // > 请注意，开通语音识别后，用户每次发送语音给公众号时，微信会在推送的语音消息XML数据包中，增加一个 `Recongnition` 字段
+
+                    // 声音消息
+                    // 属性列表：
+                    // - media_id 媒体资源 ID
+                    $mediaId = $message['MediaId'];
+                    return new Voice(['media_id' => $mediaId]);
+
                     return '收到语音消息' . ':' . $message['MediaId'];
                     break;
+
                 case 'video':
                     // 视频：
                     // - MsgType       video
                     // - MediaId       视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
                     // - ThumbMediaId  视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
+
+                    // 视频消息
+                    // 属性列表：
+                    // - title 标题
+                    // - description 描述
+                    // - media_id 媒体资源 ID
+                    // - thumb_media_id 封面资源 ID
+                    $mediaId = $message->MediaId;
+                    return new Video(['media_id' => $mediaId]);
+
                     return '收到视频消息';
                     break;
+
                 case 'shortvideo':
                     // 小视频：
                     // - MsgType     shortvideo
                     // - MediaId     视频消息媒体id，可以调用多媒体文件下载接口拉取数据。
                     // - ThumbMediaId    视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
                     return '收到小视频消息';
+                    break;
+
                 case 'location':
                     // 地理位置：
                     // $message->MsgType     location
@@ -206,16 +266,29 @@ class WeChatController extends Controller
                     // $message->Location_Y  地理位置经度
                     // $message->Scale       地图缩放大小
                     // $message->Label       地理位置信息
+
+                    // 坐标消息
+                    // 微信目前不支持回复坐标消息
+                    return new Text(['content' => $message['Label']]);
+
                     return '收到坐标消息' . '-' . '地理位置纬度' . ':' . $message['Location_X'] . '地理位置经度' . ':' . $message['Location_Y'] . '地图缩放大小' . ':' . $message['Scale'] . '地理位置信息' . ':' . $message['Label'];
                     break;
+
                 case 'link':
                     // 链接：
                     // $message->MsgType      link
                     // $message->Title        消息标题
                     // $message->Description  消息描述
                     // $message->Url          消息链接
+
+                    // 链接消息
+                    // 微信目前不支持回复链接消息
+                    $description = $message['Description'];
+                    return new Text(['content' => $description]);
+
                     return '收到链接消息' . '-' . '消息标题' . ':' . $message['Title'] . '消息描述' . ':' . $message['Description'] . '消息链接' . ':' . $message['Url'];
                     break;
+
                 case 'file':
                     // 文件：
                     // $message->MsgType      file
@@ -225,12 +298,15 @@ class WeChatController extends Controller
                     // $message->FileMd5      文件MD5值
                     // $message->FileTotalLen 文件大小，单位字节
                     return '收到文件消息';
+                    break;
+
                 // ... 其它消息
                 default:
                     return '收到其它消息';
                     break;
             }
             return "欢迎关注 田大爷！";
+            // 上面 return 了一句普通的文本内容，这里只是为了方便大家，实际上最后会有一个隐式转换为 Text 类型的动作。
         });
 
         // 某些情况，我们需要直接使用 $message 参数，那么怎么在 push 的闭包外调用呢？
@@ -242,7 +318,9 @@ class WeChatController extends Controller
         // 获取微信服务器 IP (或IP段)
         // $app->base->getValidIps();
 
-        // 从项目实例中得到一个服务端应用实例
+        /**
+         * 通过实例得到类名, 通过类名获得常量名和属性和所有方法
+         */
         // $server = $app->server;
         // $ref    = new \ReflectionClass(get_class($server));
         // $consts = $ref->getConstants(); //返回所有常量名和值
@@ -260,79 +338,150 @@ class WeChatController extends Controller
         // foreach ($methods as $method) {
         //     echo $method->getName() . '<br />';
         // }
-        // dd();
 
-        //接收用户发送的消息
-        $app->server->getMessage(function ($message) use ($app) {
+        /**
+         * 其他消息类型
+         */
+        // 图文消息
+        // 图文消息分为 NewsItem 与 News，NewsItem 为图文内容条目。
+        // NewsItem 属性：
+        // - title 标题
+        // - description 描述
+        // - image 图片链接
+        // - url 链接 URL
+        // use EasyWeChat\Kernel\Messages\News;
+        // use EasyWeChat\Kernel\Messages\NewsItem;
 
-        });
+        // $items = [
+        //     new NewsItem([
+        //         'title'       => $title,
+        //         'description' => '...',
+        //         'url'         => $url,
+        //         'image'       => $image,
+        //         // ...
+        //     ]),
+        //     new NewsItem([...]),
+        //     new NewsItem([...]),
+        //     // ...
+        // ];
+        // $news = new News($items);
 
-        // $server->setMessageHandler(function ($message) use ($user) {
-        //     //对用户发送的消息根据不同类型进行区分处理
-        //     switch ($message->MsgType) {
-        //         //事件类型消息（点击菜单、关注、扫码），略
-        //         case 'event':
-        //             switch ($message->Event) {
-        //                 case 'subscribe':
-        //                     // code...
-        //                     break;
+        // 文章
+        // 属性列表：
+        // - title 标题
+        // - author 作者
+        // - content 具体内容
+        // - thumb_media_id 图文消息的封面图片素材id（必须是永久mediaID）
+        // - digest 图文消息的摘要，仅有单图文消息才有摘要，多图文此处为空
+        // - source_url 来源 URL
+        // - show_cover 是否显示封面，0 为 false，即不显示，1 为 true，即显示
+        // use EasyWeChat\Kernel\Messages\Article;
+        // $article = new Article([
+        //         'title'   => 'EasyWeChat',
+        //         'author'  => 'overtrue',
+        //         'content' => 'EasyWeChat 是一个开源的微信 SDK，它... ...',
+        //         // ...
+        //     ]);
 
-        //                 default:
-        //                     // code...
-        //                     break;
-        //             }
-        //             break;
-        //         //文本信息处理
-        //         case 'text':
-        //             //获取到用户发送的文本内容
-        //             $content = $message->Content;
-        //             //发送到图灵机器人接口
-        //             $url = "http://www.tuling123.com/openapi/api?key=【图
-        //            灵机器人API KEY】&info=" . $content;
-        //             //获取图灵机器人返回的内容
-        //             $content = file_get_contents($url);
-        //             //对内容json解码
-        //             $content = json_decode($content);
-        //             //把内容发给用户
-        //             return new Text(['content' => $content->text]);
-        //             break;
-        //         // 图片信息处理，略
-        //         case 'image':
-        //             $mediaId = $message->MediaId;
-        //             return new Image(['media_id' => $mediaId]);
-        //             break;
-        //         // 声音信息处理，略
-        //         case 'voice':
-        //             $mediaId = $message->MediaId;
-        //             return new Voice(['media_id' => $mediaId]);
-        //             break;
-        //         // 视频信息处理，略
-        //         case 'video':
-        //             $mediaId = $message->MediaId;
-        //             return new Video(['media_id' => $mediaId]);
-        //             break;
-        //         // 坐标信息处理，略
-        //         case 'location':
-        //             return new Text(['content' => $message->Label]);
-        //             break;
+        // // or
+        // $article = new Article();
+        // $article->title   = 'EasyWeChat';
+        // $article->author  = 'overtrue';
+        // $article->content = '微信 SDK ...';
 
-        //         // 链接信息处理，略
-        //         case 'link':
-        //             return new Text(['content' => $message->Description]);
-        //             break;
+        // 素材消息
+        // 素材消息用于群发与客服消息时使用。
+        // 属性就一个：media_id。
+        // 在构造时有两个参数：
+        // $type 素材类型，目前只支持：mpnews、 mpvideo、voice、image 等。
+        // $mediaId 素材 ID，从接口查询或者上传后得到。
+        // use EasyWeChat\Kernel\Messages\Media;
+        // $media = new Media($mediaId, 'mpnews');
+        // 以上呢，是所有微信支持的基本消息类型。
+        // 需要注意的是，你不需要关心微信的消息字段叫啥，因为这里我们使用了更标准的命名，然后最终在中间做了转换，所以你不需要关注。
 
-        //         default:
-        //             break;
+        // 原始消息
+        // 原始消息是一种特殊的消息，它的场景是：你不想使用其它消息类型，你想自己手动拼消息。比如，回复消息时，你想自己拼 XML，那么你就直接用它就可以了：
+        // use EasyWeChat\Kernel\Messages\Raw;
+        // $message = new Raw('<xml>
+        // <ToUserName><![CDATA[toUser]]></ToUserName>
+        // <FromUserName><![CDATA[fromUser]]></FromUserName>
+        // <CreateTime>12345678</CreateTime>
+        // <MsgType><![CDATA[image]]></MsgType>
+        // <Image>
+        // <MediaId><![CDATA[media_id]]></MediaId>
+        // </Image>
+        // </xml>');
+
+        // 比如，你要用于客服消息(客服消息是JSON结构)：
+
+        // use EasyWeChat\Kernel\Messages\Raw;
+        // $message = new Raw('{
+        //     "touser":"OPENID",
+        //     "msgtype":"text",
+        //     "text":
+        //     {
+        //          "content":"Hello World"
         //     }
-        // });
-        //响应输出
-        // $server->serve()->send();
+        // }');
+        // 总之，就是直接写微信接口要求的格式内容就好，此类型消息在 SDK 中不存在转换行为，所以请注意不要写错格式。
 
+        /**
+         * laravel中使用需要注意的
+         */
         // $response = $app->server->serve();
         // $response->send();
         // 我们的 $app->server->serve() 就是执行服务端业务了，那么它的返回值是一个 Symfony\Component\HttpFoundation\Response 实例。
         // 我这里是直接调用了它的 send() 方法，它就是直接输出（echo）了，我们在一些框架就不能直接输出了，那你就直接拿到 Response 实例后做相应的操作即可，比如 Laravel 里你就可以直接 return $app->server->serve();
 
         return $app->server->serve();
+    }
+
+    /**
+     * [receiver 开放平台全网发布]
+     * @param  [type] $app_id [description]
+     * @return [type]         [description]
+     */
+    public function receiver($app_id)
+    {
+        $this->app_id = $app_id;
+
+        // $official = $this->initOfficialAccount();
+        $openPlatform = $this->openPlatform;
+        $server       = $openPlatform->server;
+
+        $server->push(EventHandler::class, Message::EVENT); // 检测中，这个是没什么用的
+
+        $msg = $server->getMessage();
+        if ($msg['MsgType'] == 'text') {
+            if ($msg['Content'] == 'TESTCOMPONENT_MSG_TYPE_TEXT') {
+                $curOfficialAccount = $openPlatform->officialAccount($app_id, Redis::get($app_id));
+                $curOfficialAccount->customer_service->message($msg['Content'] . '_callback')
+                    ->from($msg['ToUserName'])->to($msg['FromUserName'])->send();
+                die;
+            } elseif (strpos($msg['Content'], 'QUERY_AUTH_CODE') == 0) {
+                echo '';
+                $code           = substr($msg['Content'], 16);
+                $authorizerInfo = $openPlatform->handleAuthorize($code)['authorization_info'];
+                Redis::set(
+                    $authorizerInfo['authorizer_appid'],
+                    $authorizerInfo['authorizer_refresh_token']
+                );
+                Redis::expire($authorizerInfo['authorizer_appid'], 20);
+                $curOfficialAccount = $openPlatform->officialAccount(
+                    $authorizerInfo['authorizer_appid'],
+                    $authorizerInfo['authorizer_refresh_token']
+                );
+                $curOfficialAccount->customer_service->message($code . "_from_api")
+                    ->from($msg['ToUserName'])->to($msg['FromUserName'])->send();
+            }
+        } elseif ($msg['MsgType'] == 'event') {
+            $curOfficialAccount = $openPlatform->officialAccount($app_id, Redis::get($app_id));
+            $curOfficialAccount->customer_service->message($msg['Event'] . 'from_callback')
+                ->to($msg['FromUserName'])->from($msg['ToUserName'])->send();
+            die;
+        }
+
+        return $openPlatform->server->serve();
     }
 }
