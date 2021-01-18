@@ -119,7 +119,8 @@ class WeChatController extends Controller
                     // - MsgType  text
                     // - Content  文本消息内容
                     
-                    switch ($message['Content']) {
+                    $responseContent = '';
+                    switch (trim($message['Content'])) {
                         case '菜单':
                             # code...
                             break;
@@ -137,17 +138,20 @@ class WeChatController extends Controller
                                     'name' => ['value' => '田大爷', 'color' => '#f4645f'],
                                 ],
                             ]);
-                            return '已发送消息模板';
+                            $responseContent = '已发送消息模板';
                             break;
 
                         case 'ip':
                             // 获取微信服务器 IP (或IP段)
-                            return implode(",", $app->base->getValidIps());
+                            $responseContent = implode(",", $app->base->getValidIps());
                             break;
 
                         default:
                             # code...
                             break;
+                    }
+                    if (!empty($responseContent)) {
+                        return $responseContent;
                     }
 
                     return '收到文字消息' . ':' . $message['Content'];
