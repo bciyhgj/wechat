@@ -168,7 +168,7 @@ class WeChatController extends Controller
                             $responseContent = '赞一下';
                             break;
 
-                        case '文本消息':
+                        case '文本消息群发':
                             $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
                             break;
 
