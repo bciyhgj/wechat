@@ -246,7 +246,10 @@ class WeChatController extends Controller
                     // - media_id 媒体资源 ID
                     // - thumb_media_id 封面资源 ID
                     $mediaId = $message['MediaId'];
-                    return new Video($mediaId);
+                    return new Video($mediaId, [
+                        'title' => '标题',
+                        'description' => '描述',
+                    ]);
 
                     return '收到视频消息';
                     break;
