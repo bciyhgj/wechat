@@ -65,7 +65,7 @@ class WeChatController extends Controller
             $toUserName = $message['ToUserName'];
             $userOpenid = $message['FromUserName'];
             $createTime = $message['CreateTime'];
-            $msgId = $message['MsgId'];
+            // $msgId = $message['MsgId'];
 
             switch ($message['MsgType']) {
                 case 'event':
@@ -99,6 +99,7 @@ class WeChatController extends Controller
                         $user_info['city']           = $user['city'];
                         $user_info['country']        = $user['country'];
                         $user_info['is_subscribe']   = 1;
+
                         // if (WxStudent::weixin_attention($user_info)) {
                         //     return '欢迎关注';
                         // } else {
@@ -110,6 +111,7 @@ class WeChatController extends Controller
                         // if (WxStudent::weixin_cancel_attention($user_openid)) {
                         // return '已取消关注';
                         // }
+
                         return '已取消关注';
                     }
                     return '收到事件消息';
@@ -123,11 +125,11 @@ class WeChatController extends Controller
                     $content = trim($message['Content']);
                     switch ($content) {
                         case '菜单':
-                            # code...
+                            $responseContent = '菜单菜单';
                             break;
 
                         case '模板':
-                            Log::info(implode("\n", $app->template_message->getPrivateTemplates()));
+                            // Log::info(implode("\n", $app->template_message->getPrivateTemplates()));
                             // $app->template_message->getPrivateTemplates();
 
                             // 在推送信息中如果需要换行可以使用\\n(双斜杠n)来实现
