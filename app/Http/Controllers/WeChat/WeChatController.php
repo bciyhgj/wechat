@@ -136,7 +136,7 @@ class WeChatController extends Controller
                             $app->template_message->send([
                                 'touser' => $userOpenid,
                                 'template_id' => 'hMaxKs6qJwtMeaWj2rWJzYlxJYr8MADVUdfOH2BIxGE',
-                                'url' => 'http://blog.tianwangchong.com/',
+                                'url' => 'http://baidu.com',
                                 'data' => [
                                     'name' => ['value' => '田大爷', 'color' => '#f4645f'],
                                 ],
@@ -146,7 +146,9 @@ class WeChatController extends Controller
 
                         case 'ip':
                             // 获取微信服务器 IP (或IP段)
-                            $responseContent = implode(",", $app->base->getValidIps());
+                            $ips = implode(",", $app->base->getValidIps());
+                            Log::info($ips);
+                            $responseContent = 'ip';
                             break;
 
                         case 'TODAY_MUSIC':
