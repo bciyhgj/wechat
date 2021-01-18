@@ -168,6 +168,10 @@ class WeChatController extends Controller
                             $responseContent = '赞一下';
                             break;
 
+                        case '文本消息':
+                            $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+                            break;
+
                         default:
                             # code...
                             break;
@@ -211,6 +215,10 @@ class WeChatController extends Controller
                     // 属性列表：
                     // - media_id 媒体资源 ID
                     $mediaId = $message['MediaId'];
+
+                    // 图片消息群发
+                    $app->broadcasting->sendImage($mediaId, ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+
                     return new Image($mediaId);
 
                     return '收到图片消息' . '-' . 'MediaId' . ':' . $message['MediaId'] . 'PicUrl' . ':' . $message['PicUrl'];
@@ -228,6 +236,10 @@ class WeChatController extends Controller
                     // 属性列表：
                     // - media_id 媒体资源 ID
                     $mediaId = $message['MediaId'];
+
+                    // 语音消息群发
+                    $app->broadcasting->sendVoice($mediaId, ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+
                     return new Voice($mediaId);
 
                     return '收到语音消息' . ':' . $message['MediaId'];
@@ -246,9 +258,14 @@ class WeChatController extends Controller
                     // - media_id 媒体资源 ID
                     // - thumb_media_id 封面资源 ID
                     $mediaId = $message['MediaId'];
+
+                    // 视频消息群发
+                    $app->broadcasting->sendVideo($mediaId);
+
                     return new Video($mediaId, [
                         'title' => '标题',
                         'description' => '描述',
+                        'thumb_media_id' => $message['ThumbMediaId']
                     ]);
 
                     return '收到视频消息';
