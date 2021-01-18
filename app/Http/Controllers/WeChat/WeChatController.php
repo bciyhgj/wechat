@@ -18,20 +18,57 @@ class WeChatController extends Controller
 
         $app = app('wechat.official_account');
 
+        /**
+         * 菜单
+         */
+        $buttons = [
+            [
+                "type" => "click",
+                "name" => "今日歌曲",
+                "key"  => "V1001_TODAY_MUSIC"
+            ],
+            [
+                "name"       => "菜单",
+                "sub_button" => [
+                    [
+                        "type" => "view",
+                        "name" => "搜索",
+                        "url"  => "http://www.soso.com/"
+                    ],
+                    [
+                        "type" => "view",
+                        "name" => "视频",
+                        "url"  => "http://v.qq.com/"
+                    ],
+                    [
+                        "type" => "click",
+                        "name" => "赞一下我们",
+                        "key" => "V1001_GOOD"
+                    ],
+                ],
+            ],
+        ];
+        $app->menu->create($buttons);
+
         //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
         $user = $app->user;
 
-        // 接受用户发送的信息
+        // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app, $user) {
-            // 这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）
+
+            // 请求消息基本属性(以下所有消息都有的基本属性)：
+            // $message['ToUserName']    接收方帐号（该公众号 ID）
+            // $message['FromUserName']  发送方帐号（OpenID, 代表用户的唯一标识）
+            // $message['CreateTime']    消息创建时间（时间戳）
+            // $message['MsgId']         消息 ID（64位整型）
+            
+            $toUserName = $message['ToUserName'];
+            $userOpenid = $message['FromUserName'];
+            $createTime = $message['CreateTime'];
+            $msgId = $message['MsgId'];
+
             switch ($message['MsgType']) {
                 case 'event':
-                    // 请求消息基本属性(以下所有消息都有的基本属性)：
-                    // $message['ToUserName']    接收方帐号（该公众号 ID）
-                    // $message['FromUserName']  发送方帐号（OpenID, 代表用户的唯一标识）
-                    // $message['CreateTime']    消息创建时间（时间戳）
-                    // $message['MsgId']         消息 ID（64位整型）
-
                     // 事件：
                     // - Event       事件类型 （如：subscribe(订阅)、unsubscribe(取消订阅) ...， CLICK 等）
 
@@ -81,6 +118,38 @@ class WeChatController extends Controller
                     // 文本：
                     // - MsgType  text
                     // - Content  文本消息内容
+                    
+                    switch ($message['Content']) {
+                        case '菜单':
+                            # code...
+                            break;
+
+                        case '模板':
+                            Log::info(implode("\n", $app->template_message->getPrivateTemplates()));
+                            // $app->template_message->getPrivateTemplates();
+
+                            // 在推送信息中如果需要换行可以使用\\n(双斜杠n)来实现
+                            $app->template_message->send([
+                                'touser' => $userOpenid,
+                                'template_id' => 'hMaxKs6qJwtMeaWj2rWJzYlxJYr8MADVUdfOH2BIxGE',
+                                'url' => 'http://blog.tianwangchong.com/',
+                                'data' => [
+                                    'name' => ['value' => '田大爷', 'color' => '#f4645f'],
+                                ],
+                            ]);
+                            return '已发送消息模板';
+                            break;
+
+                        case 'ip':
+                            // 获取微信服务器 IP (或IP段)
+                            return implode(",", $app->base->getValidIps());
+                            break;
+
+                        default:
+                            # code...
+                            break;
+                    }
+
                     return '收到文字消息' . ':' . $message['Content'];
                     break;
                 case 'image':
