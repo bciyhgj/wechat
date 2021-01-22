@@ -102,20 +102,42 @@ class WeChatController extends Controller
             // $users = $app->user->select(['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
             // Log::info($users);
             
-            // 获取用户列表
+            // // 获取用户列表
+            // $users = $app->user->list();
+            // Log::info($users);
+
+            // $user = $app->user->get('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+            // Log::info($user);
+
+            // // 修改用户备注
+            // $app->user->remark('oheQ-s0msxrE2LF8BJGLVV5GAFio', '僵尸粉');
+
             $users = $app->user->list();
+            Log::info('用户列表:\\n');
             Log::info($users);
 
-            $user = $app->user->get('oheQ-s0msxrE2LF8BJGLVV5GAFio');
-            Log::info($user);
-
-            // 修改用户备注
-            $app->user->remark('oheQ-s0msxrE2LF8BJGLVV5GAFio', '僵尸粉');
-
-            $user = $app->user->get('oheQ-s0msxrE2LF8BJGLVV5GAFio');
-            Log::info($user);
+            // 拉黑用户
+            $app->user->block('oheQ-s0msxrE2LF8BJGLVV5GAFio');
 
             $users = $app->user->list();
+            Log::info('拉黑后-用户列表:\\n');
+            Log::info($users);
+
+            // 获取黑名单
+            $users = $app->user->blacklist();
+            Log::info('拉黑名单列表:\\n');
+            Log::info($users);
+
+            // 取消拉黑用户
+            $app->user->unblock('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+
+            $users = $app->user->list();
+            Log::info('取消拉黑用户后-用户列表:\\n');
+            Log::info($users);
+
+            // 获取黑名单
+            $users = $app->user->blacklist();
+            Log::info('拉黑名单列表:\\n');
             Log::info($users);
 
             switch ($message['MsgType']) {
