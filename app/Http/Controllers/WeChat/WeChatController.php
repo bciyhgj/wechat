@@ -112,33 +112,52 @@ class WeChatController extends Controller
             // // 修改用户备注
             // $app->user->remark('oheQ-s0msxrE2LF8BJGLVV5GAFio', '僵尸粉');
 
-            $users = $app->user->list();
-            Log::info('用户列表:\\n');
-            Log::info($users);
+            // $users = $app->user->list();
+            // Log::info('用户列表:');
+            // Log::info($users);
 
-            // 拉黑用户
-            $app->user->block('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+            // // 拉黑用户
+            // $app->user->block('oheQ-s0msxrE2LF8BJGLVV5GAFio');
 
-            $users = $app->user->list();
-            Log::info('拉黑后-用户列表:\\n');
-            Log::info($users);
+            // $users = $app->user->list();
+            // Log::info('拉黑后-用户列表:');
+            // Log::info($users);
 
-            // 获取黑名单
-            $users = $app->user->blacklist();
-            Log::info('拉黑名单列表:\\n');
-            Log::info($users);
+            // // 获取黑名单
+            // $users = $app->user->blacklist();
+            // Log::info('拉黑名单列表:');
+            // Log::info($users);
 
-            // 取消拉黑用户
-            $app->user->unblock('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+            // // 取消拉黑用户
+            // $app->user->unblock('oheQ-s0msxrE2LF8BJGLVV5GAFio');
 
-            $users = $app->user->list();
-            Log::info('取消拉黑用户后-用户列表:\\n');
-            Log::info($users);
+            // $users = $app->user->list();
+            // Log::info('取消拉黑用户后-用户列表:');
+            // Log::info($users);
 
-            // 获取黑名单
-            $users = $app->user->blacklist();
-            Log::info('拉黑名单列表:\\n');
-            Log::info($users);
+            // // 获取黑名单
+            // $users = $app->user->blacklist();
+            // Log::info('拉黑名单列表:');
+            // Log::info($users);
+
+            /**
+             * 用户标签
+             */
+            // 获取所有标签
+            $tags = $app->user_tag->list();
+            Log::info('获取所有标签');
+            Log::info($tags);
+
+            // 创建标签
+            $tag = $app->user_tag->create('测试标签');
+            $tag = $app->user_tag->create('测试标签2');
+            Log::info('创建标签-标签信息');
+            Log::info($tag);
+
+            // 获取所有标签
+            $tags = $app->user_tag->list();
+            Log::info('获取所有标签');
+            Log::info($tags);
 
             switch ($message['MsgType']) {
                 case 'event':
