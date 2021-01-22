@@ -28,31 +28,63 @@ class WeChatController extends Controller
         /**
          * 自定义菜单
          */
+        // $buttons = [
+        //     [
+        //         "type" => "click",
+        //         "name" => "今日歌曲",
+        //         "key"  => "TODAY_MUSIC",
+        //     ],
+        //     [
+        //         "name"       => "菜单",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "搜索",
+        //                 "url"  => "http://www.soso.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "视频",
+        //                 "url"  => "http://v.qq.com/",
+        //             ],
+        //             [
+        //                 "type" => "click",
+        //                 "name" => "赞一下我们",
+        //                 "key"  => "ZAN",
+        //             ],
+        //         ],
+        //     ],
+        // ];
         $buttons = [
             [
-                "type" => "click",
-                "name" => "今日歌曲",
-                "key"  => "TODAY_MUSIC",
-            ],
-            [
-                "name"       => "菜单",
+                "name"       => "监督管理",
                 "sub_button" => [
                     [
                         "type" => "view",
-                        "name" => "搜索",
+                        "name" => "发起整改",
                         "url"  => "http://www.soso.com/",
                     ],
                     [
                         "type" => "view",
-                        "name" => "视频",
+                        "name" => "临时检查单",
                         "url"  => "http://v.qq.com/",
-                    ],
-                    [
-                        "type" => "click",
-                        "name" => "赞一下我们",
-                        "key"  => "ZAN",
-                    ],
+                    ]
                 ],
+            ],
+            [
+                "name"       => "工单管理",
+                "sub_button" => [
+                    [
+                        "type" => "view",
+                        "name" => "报修审核工单",
+                        "url"  => "http://www.soso.com/",
+                    ]
+                ],
+            ],
+            [
+                "type" => "view",
+                "name" => "个人中心",
+                "key"  => "http://www.soso.com/",
             ],
         ];
         $app->menu->create($buttons);
@@ -143,64 +175,123 @@ class WeChatController extends Controller
             /**
              * 用户标签
              */
-            // 获取所有标签
-            $tags = $app->user_tag->list();
-            Log::info('获取所有标签');
-            Log::info($tags);
+            // // 获取所有标签
+            // $tags = $app->user_tag->list();
+            // Log::info('获取所有标签');
+            // Log::info($tags);
 
-            // // 创建标签
-            // $tag = $app->user_tag->create('测试标签1');
-            // $tag = $app->user_tag->create('测试标签2');
-            // Log::info('创建标签-标签信息');
+            // // // 创建标签
+            // // $tag = $app->user_tag->create('测试标签1');
+            // // $tag = $app->user_tag->create('测试标签2');
+            // // Log::info('创建标签-标签信息');
+            // // Log::info($tag);
+
+            // // 修改标签信息
+            // $tag = $app->user_tag->update(100, '测试标签1');
+            // Log::info('修改标签后的标签信息');
             // Log::info($tag);
+            // // array (
+            // //   'errcode' => 0,
+            // //   'errmsg' => 'ok',
+            // // )
 
-            // 修改标签信息
-            $tag = $app->user_tag->update(100, '测试标签1');
-            Log::info('修改标签后的标签信息');
-            Log::info($tag);
+            // // 删除标签
+            // $tag = $app->user_tag->delete(101);
+            // Log::info('删除标签');
+            // Log::info($tag);
+            // // array (
+            // //   'errcode' => 0,
+            // //   'errmsg' => 'ok',
+            // // )
 
-            // 删除标签
-            $tag = $app->user_tag->delete(101);
-            Log::info('删除标签');
-            Log::info($tag);
+            // // 获取所有标签
+            // $tags = $app->user_tag->list();
+            // Log::info('获取所有标签');
+            // Log::info($tags);
+            // // array (
+            // //   'tags' =>
+            // //   array (
+            // //     0 =>
+            // //     array (
+            // //       'id' => 2,
+            // //       'name' => '星标组',
+            // //       'count' => 0,
+            // //     ),
+            // //     1 =>
+            // //     array (
+            // //       'id' => 100,
+            // //       'name' => '测试标签1',
+            // //       'count' => 0,
+            // //     ),
+            // //   ),
+            // // )
 
-            // 获取所有标签
-            $tags = $app->user_tag->list();
-            Log::info('获取所有标签');
-            Log::info($tags);
+            // // 获取指定 openid 用户所属的标签
+            // $userTags = $app->user_tag->userTags('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+            // Log::info('获取指定 openid 用户所属的标签');
+            // Log::info($userTags);
+            // // array (
+            // //   'tagid_list' =>
+            // //   array (
+            // //   ),
+            // // )
 
-            // 获取指定 openid 用户所属的标签
-            $userTags = $app->user_tag->userTags('oheQ-s0msxrE2LF8BJGLVV5GAFio');
-            Log::info('获取指定 openid 用户所属的标签');
-            Log::info($userTags);
+            // // 获取标签下用户列表
+            // $users = $app->user_tag->usersOfTag(2, $nextOpenId = '');
+            // Log::info('获取标签(id:2, name => "星标组")下用户列表');
+            // Log::info($users);
+            // // array (
+            // //   'count' => 0,
+            // // )
 
-            // 获取标签下用户列表
-            $users = $app->user_tag->usersOfTag(2, $nextOpenId = '');
-            Log::info('获取标签(id:2, name => "星标组")下用户列表');
-            Log::info($users);
+            // // 批量为用户添加标签
+            // $tagId = 100;
+            // $openIds = ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8'];
+            // $tags1 = 'tags1';
+            // $tags1 = $app->user_tag->tagUsers($openIds, $tagId);
+            // Log::info('批量为用户添加标签');
+            // Log::info($tags1);
+            // // array (
+            // //   'errcode' => 0,
+            // //   'errmsg' => 'ok',
+            // // )
 
-            // 批量为用户添加标签
-            $tagId = 100;
-            $openIds = ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8'];
-            $tags1 = 'tags1';
-            $tags1 = $app->user_tag->tagUsers($openIds, $tagId);
-            Log::info('批量为用户添加标签');
-            Log::info($tags1);
+            // // 获取指定 openid 用户所属的标签
+            // $userTags = $app->user_tag->userTags('oheQ-s0msxrE2LF8BJGLVV5GAFio');
+            // Log::info('获取指定 openid 用户所属的标签');
+            // Log::info($userTags);
+            // // array (
+            // //   'tagid_list' =>
+            // //   array (
+            // //     0 => 100,
+            // //   ),
+            // // )
 
-            // 获取指定 openid 用户所属的标签
-            $userTags = $app->user_tag->userTags('oheQ-s0msxrE2LF8BJGLVV5GAFio');
-            Log::info('获取指定 openid 用户所属的标签');
-            Log::info($userTags);
+            // $users = $app->user_tag->usersOfTag(100, $nextOpenId = '');
+            // Log::info('获取标签(id:100)下用户列表');
+            // Log::info($users);
+            // // array (
+            // //   'count' => 2,
+            // //   'data' =>
+            // //   array (
+            // //     'openid' =>
+            // //     array (
+            // //       0 => 'oheQ-s0msxrE2LF8BJGLVV5GAFio',
+            // //       1 => 'oheQ-s2R2SjoSom6oWxLOcnKPGR8',
+            // //     ),
+            // //   ),
+            // //   'next_openid' => 'oheQ-s2R2SjoSom6oWxLOcnKPGR8',
+            // // )
 
-            $users = $app->user_tag->usersOfTag(100, $nextOpenId = '');
-            Log::info('获取标签(id:100)下用户列表');
-            Log::info($users);
-
-            // 批量为用户移除标签
-            $tags2 = 'tags2';
-            $tags2 = $app->user_tag->untagUsers($openIds, $tagId);
-            Log::info('批量为用户添加标签');
-            Log::info($tags2);
+            // // 批量为用户移除标签
+            // $tags2 = 'tags2';
+            // $tags2 = $app->user_tag->untagUsers($openIds, $tagId);
+            // Log::info('批量为用户添加标签');
+            // Log::info($tags2);
+            // // array (
+            // //   'errcode' => 0,
+            // //   'errmsg' => 'ok',
+            // // )
 
             switch ($message['MsgType']) {
                 case 'event':
