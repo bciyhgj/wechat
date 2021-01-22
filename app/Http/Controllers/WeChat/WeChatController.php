@@ -95,8 +95,13 @@ class WeChatController extends Controller
             //   'qr_scene' => 0,
             //   'qr_scene_str' => '',
             // )
-            // 获取多个用户信息：
-            $users = $app->user->select(['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+
+            // // 获取多个用户信息：
+            // $users = $app->user->select(['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+            // Log::info($users);
+            
+            // 获取用户列表
+            $users = $app->user->list($nextOpenId = null);  // $nextOpenId 可选
             Log::info($users);
 
             switch ($message['MsgType']) {
