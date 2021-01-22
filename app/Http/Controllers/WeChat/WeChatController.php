@@ -71,9 +71,33 @@ class WeChatController extends Controller
             $createTime = $message['CreateTime'];
             // $msgId = $message['MsgId'];
 
-            $user = $app->user->get($message['FromUserName']);
             // 打印用户信息
-            Log::info($user);
+            // 获取单个用户信息：
+            // $user = $app->user->get($message['FromUserName']);
+            // Log::info($user);
+            // array (
+            //   'subscribe' => 1,
+            //   'openid' => 'oheQ-s2R2SjoSom6oWxLOcnKPGR8',
+            //   'nickname' => '所有的伟大 源于一个勇敢的开始',
+            //   'sex' => 1,
+            //   'language' => 'zh_CN',
+            //   'city' => '杭州',
+            //   'province' => '浙江',
+            //   'country' => '中国',
+            //   'headimgurl' => 'http://thirdwx.qlogo.cn/mmopen/cWHVd8XtnlRas7rmhM1hBQIG6ITGSA4Tomzf50fWPjlBFqAnqNjhzxRfDKX6a2GITQicYLuZ3v6n7uicbQxichAbic5N8myDSC6L/132',
+            //   'subscribe_time' => 1474560453,
+            //   'remark' => '',
+            //   'groupid' => 0,
+            //   'tagid_list' =>
+            //   array (
+            //   ),
+            //   'subscribe_scene' => 'ADD_SCENE_OTHERS',
+            //   'qr_scene' => 0,
+            //   'qr_scene_str' => '',
+            // )
+            // 获取多个用户信息：
+            $users = $app->user->select(['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
+            Log::info($users);
 
             switch ($message['MsgType']) {
                 case 'event':
