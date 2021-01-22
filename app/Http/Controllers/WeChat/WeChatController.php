@@ -26,7 +26,7 @@ class WeChatController extends Controller
         $app = app('wechat.official_account');
 
         /**
-         * 自定义菜单
+         * 菜单
          */
         // $buttons = [
         //     [
@@ -55,39 +55,44 @@ class WeChatController extends Controller
         //         ],
         //     ],
         // ];
-        $buttons = [
-            [
-                "name"       => "监督管理",
-                "sub_button" => [
-                    [
-                        "type" => "view",
-                        "name" => "发起整改",
-                        "url"  => "http://www.soso.com/",
-                    ],
-                    [
-                        "type" => "view",
-                        "name" => "临时检查单",
-                        "url"  => "http://v.qq.com/",
-                    ]
-                ],
-            ],
-            [
-                "name"       => "工单管理",
-                "sub_button" => [
-                    [
-                        "type" => "view",
-                        "name" => "报修审核工单",
-                        "url"  => "http://www.soso.com/",
-                    ]
-                ],
-            ],
-            [
-                "type" => "view",
-                "name" => "个人中心",
-                "key"  => "http://www.soso.com/",
-            ],
-        ];
-        $app->menu->create($buttons);
+        // $buttons = [
+        //     [
+        //         "name"       => "监督管理",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "发起整改",
+        //                 "url"  => "http://www.soso.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "临时检查单",
+        //                 "url"  => "http://v.qq.com/",
+        //             ]
+        //         ],
+        //     ],
+        //     [
+        //         "name"       => "工单管理",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "报修审核工单",
+        //                 "url"  => "http://www.soso.com/",
+        //             ]
+        //         ],
+        //     ],
+        //     [
+        //         "type" => "view",
+        //         "name" => "个人中心",
+        //         "key"  => "http://www.soso.com/",
+        //     ],
+        // ];
+        // $app->menu->create($buttons);
+
+        // 读取（查询）已设置菜单
+        $list = $app->menu->list();
+        Log::info('读取（查询）已设置菜单');
+        Log::info($list);
 
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app) {
