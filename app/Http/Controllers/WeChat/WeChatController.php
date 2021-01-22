@@ -94,6 +94,11 @@ class WeChatController extends Controller
         Log::info('读取（查询）已设置菜单');
         Log::info($list);
 
+        // 获取当前菜单
+        $current = $app->menu->current();
+        Log::info('获取当前菜单');
+        Log::info($current);
+
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app) {
 
