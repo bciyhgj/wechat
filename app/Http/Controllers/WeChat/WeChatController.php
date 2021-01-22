@@ -57,14 +57,8 @@ class WeChatController extends Controller
         ];
         $app->menu->create($buttons);
 
-        //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
-        $user = $app->user;
-
-        // 打印用户信息
-        Log::info($user->nickname);
-
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
-        $app->server->push(function ($message) use ($app, $user) {
+        $app->server->push(function ($message) use ($app) {
 
             // 请求消息基本属性(以下所有消息都有的基本属性)：
             // $message['ToUserName']    接收方帐号（该公众号 ID）
@@ -76,6 +70,10 @@ class WeChatController extends Controller
             $userOpenid = $message['FromUserName'];
             $createTime = $message['CreateTime'];
             // $msgId = $message['MsgId'];
+
+            $user = $app->user->get($message['FromUserName']);
+            // 打印用户信息
+            Log::info($user);
 
             switch ($message['MsgType']) {
                 case 'event':
