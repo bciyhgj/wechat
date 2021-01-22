@@ -61,7 +61,7 @@ class WeChatController extends Controller
         $user = $app->user;
 
         // 打印用户信息
-        Log::info($user);
+        Log::info($user->nickname);
 
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app, $user) {
