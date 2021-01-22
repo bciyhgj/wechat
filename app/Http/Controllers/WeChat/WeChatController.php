@@ -60,6 +60,9 @@ class WeChatController extends Controller
         //用户实例，可以通过类似$user->nickname这样的方法拿到用户昵称，openid等等
         $user = $app->user;
 
+        // 打印用户信息
+        Log::info($user);
+
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app, $user) {
 
@@ -169,8 +172,8 @@ class WeChatController extends Controller
                             break;
 
                         case '文本消息群发':
-                            Log::info($app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]));
-                            $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]);
+                            Log::info($app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]));
+                            $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]);
                             $responseContent = '文本消息群发';
                             break;
 
