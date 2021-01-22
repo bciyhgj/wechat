@@ -155,7 +155,7 @@ class WeChatController extends Controller
             // Log::info($tag);
 
             // 修改标签信息
-            $user = $app->user_tag->update(100, '修改测试标签1');
+            $tag = $app->user_tag->update(100, '测试标签1');
             Log::info('修改标签后的标签信息');
             Log::info($tag);
 
