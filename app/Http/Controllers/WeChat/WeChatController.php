@@ -71,7 +71,6 @@ class WeChatController extends Controller
             $createTime = $message['CreateTime'];
             // $msgId = $message['MsgId'];
 
-            // 打印用户信息
             // 获取单个用户信息：
             // $user = $app->user->get($message['FromUserName']);
             // Log::info($user);
@@ -101,7 +100,7 @@ class WeChatController extends Controller
             // Log::info($users);
             
             // 获取用户列表
-            $users = $app->user->list($nextOpenId = null);  // $nextOpenId 可选
+            $users = $app->user->list();
             Log::info($users);
 
             switch ($message['MsgType']) {
