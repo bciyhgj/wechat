@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\WeChat;
 
 use App\Http\Controllers\Controller;
-use Log;
-use EasyWeChat\Kernel\Messages\Text;
 use EasyWeChat\Kernel\Messages\Image;
-use EasyWeChat\Kernel\Messages\Voice;
+use EasyWeChat\Kernel\Messages\Text;
 use EasyWeChat\Kernel\Messages\Video;
+use EasyWeChat\Kernel\Messages\Voice;
+use Log;
 
 class WeChatController extends Controller
 {
@@ -263,7 +263,7 @@ class WeChatController extends Controller
             // // 获取多个用户信息：
             // $users = $app->user->select(['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8']);
             // Log::info($users);
-            
+
             // // 获取用户列表
             // $users = $app->user->list();
             // Log::info($users);
@@ -481,6 +481,69 @@ class WeChatController extends Controller
 
                     $responseContent = '';
                     $content         = trim($message['Content']);
+
+                    // 判断是否为彩票
+                    $keywords = explode('+', $content);
+                    if ($keywords[0] == '彩票') {
+                        $code = 'dlt';
+                        $rows = 10;
+                        $format = 'json';
+
+                        // 彩种
+                        if (isset($keywords[1]) && !empty($keywords[1])) {
+                            $code = $keywords[1];
+                        }
+
+                        // 行数
+                        if (isset($keywords[2]) && !empty($keywords[2])) {
+                            $rows = $keywords[2];
+                        }
+
+                        $url = "http://f.apiplus.net/{$code}-{$rows}.{$format}";
+                        // 获取图灵机器人返回的内容
+                        $data = file_get_contents($url);
+                        // 对内容json解码
+                        $data = json_decode($data, true);
+
+                        $responseContent = "";
+
+                        foreach ($data['data'] as $key => $value) {
+                            $responseContent .= "期号:" . $value['expect'] . "\n";
+                            $responseContent .= "开奖号码:" . $value['opencode'] . "\n";
+                            $responseContent .= "开奖时间:" . $value['opentime'] . "\n";
+                            $responseContent .= "\n";
+                        }
+
+                        // 文本消息
+                        // 属性列表：
+                        // - content 文本内容
+                        return new Text($responseContent);
+
+                        // $now = date('Y-m-d H:i:s');
+                        // $src = 'http://f.apiplus.cn/newly.do?code=cqssc&format=json';
+                        // //防止GET本地缓存，增加随机数
+                        // $src .= (strpos($src, '?') > 0 ? '&' : '?') . '_=' . time();
+                        // $html = file_get_contents($src);
+                        // $json = json_decode($html, true);
+
+                        // if (isset($json['rows'])) {
+                        //     echo "{$now}共采集到{$json['rows']}行开奖数据：<br/>";
+                        //     foreach ($json['data'] as $r) {
+                        //         $expect   = preg_replace("/^(\d{8})(\d{3})$/", "\\1-\\2", $r['expect']);
+                        //         $opencode = $r['opencode'];
+                        //         $opentime = $r['opentime']
+                        //         echo "开奖期号：{$expect}<br/>";
+                        //         echo "开奖号码：{$opencode}<br/>";
+                        //         echo "开奖时间：{$opentime}<br/>";
+                        //         echo '<br/>';
+                        //         //TODO: 分析数据、对比数据，并写入数据库
+                        //     }
+                        // } else {
+                        //     echo "采集失败，返回提示：<br/>";
+                        //     echo $html;
+                        // }
+                    }
+
                     switch ($content) {
                         case '卡券':
                             /**
@@ -685,9 +748,9 @@ class WeChatController extends Controller
                     $app->broadcasting->sendVideo($mediaId);
 
                     return new Video($mediaId, [
-                        'title' => '标题',
-                        'description' => '描述',
-                        'thumb_media_id' => $message['ThumbMediaId']
+                        'title'          => '标题',
+                        'description'    => '描述',
+                        'thumb_media_id' => $message['ThumbMediaId'],
                     ]);
 
                     return '收到视频消息';
@@ -753,7 +816,7 @@ class WeChatController extends Controller
 
         // 某些情况，我们需要直接使用 $message 参数，那么怎么在 push 的闭包外调用呢？
         // $message = $server->getMessage();
-        
+
         /**
          * 基础接口
          */
