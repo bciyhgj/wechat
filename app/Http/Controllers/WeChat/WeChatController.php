@@ -603,7 +603,11 @@ class WeChatController extends Controller
                                 // <option value="yzfcpl7">河北燕赵风采排列7</option>
                                 // <option value="zyfc22x5">河南中原风采22选5</option>
                             ];
-                            $responseContent = implode("\n", $data);
+
+                            $responseContent = "格式为:彩票+彩票编码+条数; 彩票编码详情请看下发; 条数默认为10, 可以不填!\n";
+
+                            $responseContent .= implode("\n", $data);
+
                             return new Text($responseContent);
                         }
 
