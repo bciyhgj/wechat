@@ -535,7 +535,7 @@ class WeChatController extends Controller
                                     ],
                                 ],
                             ];
-                            Log::info('添加普通菜单');
+
                             // 读取（查询）已设置菜单
                             $list = $app->menu->list();
                             Log::info('读取（查询）已设置菜单');
@@ -546,10 +546,11 @@ class WeChatController extends Controller
                             Log::info('获取当前菜单');
                             Log::info($current);
 
-                            // Log::info('删除菜单');
-                            // Log::info($app->menu->delete());
+                            Log::info('删除菜单');
+                            Log::info($app->menu->delete());
 
                             // 设置新的菜单
+                            Log::info('添加普通菜单');
                             Log::info($app->menu->create($buttons));
                             $responseContent = '菜单菜单';
                             break;
