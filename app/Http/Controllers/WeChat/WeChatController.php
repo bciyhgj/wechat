@@ -604,7 +604,7 @@ class WeChatController extends Controller
                                 // <option value="zyfc22x5">河南中原风采22选5</option>
                             ];
 
-                            $responseContent = "格式为:彩票+彩票编码+条数; 彩票编码详情请看下发; 条数默认为10, 可以不填!\n";
+                            $responseContent = "格式为:彩票+彩票编码+条数; 彩票编码详情请看下方; 条数默认为10, 可以不填!\n\n";
 
                             $responseContent .= implode("\n", $data);
 
