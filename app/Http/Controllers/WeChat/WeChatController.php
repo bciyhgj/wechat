@@ -603,7 +603,7 @@ class WeChatController extends Controller
                                 // <option value="yzfcpl7">河北燕赵风采排列7</option>
                                 // <option value="zyfc22x5">河南中原风采22选5</option>
                             ];
-                            $responseContent = implode("\n", $data)
+                            $responseContent = implode("\n", $data);
                             return new Text($responseContent);
                         }
 
