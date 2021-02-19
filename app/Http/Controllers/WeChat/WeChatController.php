@@ -514,6 +514,8 @@ class WeChatController extends Controller
                             $responseContent .= "\n";
                         }
 
+                        $responseContent = rtrim($responseContent, "\n");
+
                         // 文本消息
                         // 属性列表：
                         // - content 文本内容
