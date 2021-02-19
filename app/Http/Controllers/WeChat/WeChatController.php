@@ -621,6 +621,8 @@ class WeChatController extends Controller
                             $rows = $keywords[2];
                         }
 
+                        // 官网:http://www.opencai.net/apifree/
+                        // 接口地址
                         $url = "http://f.apiplus.net/{$code}-{$rows}.{$format}";
                         // 获取图灵机器人返回的内容
                         $data = file_get_contents($url);
