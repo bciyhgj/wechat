@@ -26,8 +26,26 @@ class WeChatController extends Controller
         $app = app('wechat.official_account');
 
         /**
+         * 语义理解
+         */
+        // $result = $app->semantic->query('查一下明天从北京到上海的南航机票', "flight,hotel", array('city' => '北京', 'uid' => '123456'));
+        // Log::info('语义理解');
+        // Log::info($result);
+
+        /**
+         * 自动回复
+         */
+        // 获取当前设置的回复规则
+        // Log::info('获取当前设置的回复规则');
+        // Log::info($app->auto_reply->current());
+
+        /**
          * 菜单
          */
+        // Log::info('删除菜单');
+        // Log::info($app->menu->delete());
+
+        // // 添加普通菜单(需要添加普通菜单后才可以创建个性化菜单)
         // $buttons = [
         //     [
         //         "type" => "click",
@@ -55,21 +73,82 @@ class WeChatController extends Controller
         //         ],
         //     ],
         // ];
-        // $buttons = [
+        // Log::info('添加普通菜单');
+        // Log::info($app->menu->create($buttons));
+
+        // // 添加个性化菜单
+        // $buttons1 = [
+        //     [
+        //         "name"       => "招投标",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "全部招标",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "我的投标",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ]
+        //         ]
+        //     ],
+        //     [
+        //         "name"       => "投诉与报修",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "我要投诉",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "发起报修",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ]
+        //         ]
+        //     ],
+        //     [
+        //         "name" => "个人中心",
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "账户管理",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "消息与通知",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "缴费管理",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ]
+        //         ]
+        //     ]
+        // ];
+        // $buttons2 = [
         //     [
         //         "name"       => "监督管理",
         //         "sub_button" => [
         //             [
         //                 "type" => "view",
-        //                 "name" => "发起整改",
-        //                 "url"  => "http://www.soso.com/",
+        //                 "name" => "临时检查单",
+        //                 "url"  => "https://www.baidu.com/",
         //             ],
         //             [
         //                 "type" => "view",
-        //                 "name" => "临时检查单",
-        //                 "url"  => "http://v.qq.com/",
+        //                 "name" => "月度巡检表",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "发起整改",
+        //                 "url"  => "https://www.baidu.com/",
         //             ]
-        //         ],
+        //         ]
         //     ],
         //     [
         //         "name"       => "工单管理",
@@ -77,32 +156,68 @@ class WeChatController extends Controller
         //             [
         //                 "type" => "view",
         //                 "name" => "报修审核工单",
-        //                 "url"  => "http://www.soso.com/",
+        //                 "url"  => "https://www.baidu.com/",
         //             ]
-        //         ],
+        //         ]
         //     ],
         //     [
-        //         "type" => "view",
         //         "name" => "个人中心",
-        //         "key"  => "http://www.soso.com/",
-        //     ],
+        //         "sub_button" => [
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "账户管理",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ],
+        //             [
+        //                 "type" => "view",
+        //                 "name" => "消息与通知",
+        //                 "url"  => "https://www.baidu.com/",
+        //             ]
+        //         ]
+        //     ]
         // ];
-        // $app->menu->create($buttons);
+        // $matchRule1 = [
+        //     "tag_id" => 102
+        // ];
+        // $matchRule2 = [
+        //     "tag_id" => 103
+        // ];
+        // Log::info('添加个性化菜单');
+        // Log::info($app->menu->create($buttons1, $matchRule1));
+        // Log::info($app->menu->create($buttons2, $matchRule2));
 
-        // 读取（查询）已设置菜单
-        $list = $app->menu->list();
-        Log::info('读取（查询）已设置菜单');
-        Log::info($list);
+        // // 读取（查询）已设置菜单
+        // $list = $app->menu->list();
+        // Log::info('读取（查询）已设置菜单');
+        // Log::info($list);
 
-        // 获取当前菜单
-        $current = $app->menu->current();
-        Log::info('获取当前菜单');
-        Log::info($current);
+        // // 获取当前菜单
+        // $current = $app->menu->current();
+        // Log::info('获取当前菜单');
+        // Log::info($current);
+
+        // $app->user_tag->create('商户');// 102
+        // $app->user_tag->create('运营商');// 103
+        // $tags = $app->user_tag->list();
+        // Log::info('标签');
+        // Log::info($tags);
+        // $openIds = ['oheQ-s2R2SjoSom6oWxLOcnKPGR8'];
+        // $app->user_tag->tagUsers($openIds, 102);
+        // $openIds = ['oheQ-s0msxrE2LF8BJGLVV5GAFio'];
+        // $app->user_tag->tagUsers($openIds, 103);
+        // Log::info('102标签下的用户');
+        // Log::info($app->user_tag->usersOfTag(102, $nextOpenId = ''));
+        // Log::info('103标签下的用户');
+        // Log::info($app->user_tag->usersOfTag(103, $nextOpenId = ''));
 
         // 删除菜单
-        $menu = $app->menu->delete(); // 全部
-        Log::info('删除菜单');
-        Log::info($menu);
+        // $menu = $app->menu->delete(); // 全部
+        // // array (
+        // //   'errcode' => 0,
+        // //   'errmsg' => 'ok',
+        // // )
+        // Log::info('删除菜单');
+        // Log::info($menu);
 
         // 接受用户发送的信息。这里我们使用 push 传入了一个 闭包（Closure），该闭包接收一个参数 $message 为消息对象（类型取决于你的配置中 response_type）。
         $app->server->push(function ($message) use ($app) {
@@ -367,7 +482,61 @@ class WeChatController extends Controller
                     $responseContent = '';
                     $content         = trim($message['Content']);
                     switch ($content) {
+                        case '卡券':
+                            /**
+                             * 卡券
+                             */
+                            // 获取实例
+                            $card = $app->card;
+                            // 获取卡券颜色
+                            Log::info('获取卡券颜色');
+                            Log::info($card->colors());
+                            // 卡券开放类目查询
+                            Log::info('卡券开放类目查询');
+                            Log::info($card->categories());
+                            break;
+
+                        case '客服':
+                            /**
+                             * 客服
+                             */
+                            // 添加客服
+                            Log::info('添加客服');
+                            Log::info($app->customer_service->create('foo@test', '客服1'));
+                            // 获取所有客服
+                            Log::info('获取所有客服');
+                            Log::info($app->customer_service->list());
+                            // 获取所有在线的客服
+                            Log::info('获取所有在线的客服');
+                            Log::info($app->customer_service->online());
+                            break;
+
                         case '菜单':
+                            // 添加普通菜单(需要添加普通菜单后才可以创建个性化菜单)
+                            $buttons = [
+                                [
+                                    "type" => "view",
+                                    "name" => "商城",
+                                    "url"  => "http://www.tianwangchong.com/app/index.php?i=2&c=entry&m=ewei_shopv2&do=mobile",
+                                ],
+                                [
+                                    "name"       => "菜单",
+                                    "sub_button" => [
+                                        [
+                                            "type" => "view",
+                                            "name" => "Ip",
+                                            "url"  => "http://ip.tianwangchong.com",
+                                        ],
+                                        [
+                                            "type" => "view",
+                                            "name" => "博客",
+                                            "url"  => "http://blog.tianwangchong.com/",
+                                        ],
+                                    ],
+                                ],
+                            ];
+                            Log::info('添加普通菜单');
+                            Log::info($app->menu->create($buttons));
                             $responseContent = '菜单菜单';
                             break;
 
@@ -404,6 +573,8 @@ class WeChatController extends Controller
 
                         case '文本消息群发':
                             Log::info($app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]));
+                            $app->broadcasting->sendText("大家好！欢迎使用 EasyWeChat。", 102); // $tagId 必须是整型数字
+
                             $app->broadcasting->sendText("大家好！我是田大爷", ['oheQ-s0msxrE2LF8BJGLVV5GAFio', 'oheQ-s2R2SjoSom6oWxLOcnKPGR8', $userOpenid]);
                             $responseContent = '文本消息群发';
                             break;
