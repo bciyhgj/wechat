@@ -604,7 +604,7 @@ class WeChatController extends Controller
                                 // <option value="zyfc22x5">河南中原风采22选5</option>
                             ];
 
-                            $responseContent = "格式为:彩票+彩票编码+条数; 彩票编码详情请看下方; 条数默认为10, 可以不填!\n\n";
+                            $responseContent = "格式为:彩票+彩票编码+条数; 彩票编码详情请看下方; 条数默认为10, 可以不填; 例如:彩票+ssq+10\n\n";
 
                             $responseContent .= implode("\n", $data);
 
@@ -636,7 +636,7 @@ class WeChatController extends Controller
                         $responseContent = "";
 
                         foreach ($data['data'] as $key => $value) {
-                            $responseContent .= "期号:" . $value['expect'] . "\n";
+                            $responseContent .= "<strong>期号:" . $value['expect'] . "<strong>\n";
                             $responseContent .= "开奖号码:" . $value['opencode'] . "\n";
                             $responseContent .= "开奖时间:" . $value['opentime'] . "\n";
                             $responseContent .= "\n";
