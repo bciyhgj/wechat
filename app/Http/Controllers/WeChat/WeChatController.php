@@ -485,6 +485,128 @@ class WeChatController extends Controller
                     // 判断是否为彩票
                     $keywords = explode('+', $content);
                     if ($keywords[0] == '彩票') {
+                        if (count($keywords) == 1) {
+                            $data = [
+                                "超级大乐透:dlt",
+                                "双色球:ssq",
+                                "福彩3d:fc3d",
+                                "排列3:pl3",
+                                "排列5:pl5",
+                                "七乐彩:qlc",
+                                "七星彩:qxc",
+                                "六场半全场:zcbqc",
+                                "四场进球彩:zcjqc",
+                                "浙江11选5 - 高频:zj11x5",
+                                "浙江快乐十二 - 高频:zjkl12"
+                                // <option value="dlt">超级大乐透</option>
+                                // <option value="fc3d">福彩3d</option>
+                                // <option value="pl3">排列3</option>
+                                // <option value="pl5">排列5</option>
+                                // <option value="qlc">七乐彩</option>
+                                // <option value="qxc">七星彩</option>
+                                // <option value="ssq">双色球</option>
+                                // <option value="zcbqc">六场半全场</option>
+                                // <option value="zcjqc">四场进球彩</option>
+                                // <option value="zcsfc">十四场胜负彩(任9)</option>
+                                // <option value="ah11x5">安徽11选5 - 高频</option>
+                                // <option value="bj11x5">北京11选5 - 高频</option>
+                                // <option value="fj11x5">福建11选5 - 高频</option>
+                                // <option value="gd11x5">广东11选5 - 高频</option>
+                                // <option value="gs11x5">甘肃11选5 - 高频</option>
+                                // <option value="gx11x5">广西11选5 - 高频</option>
+                                // <option value="gz11x5">贵州11选5 - 高频</option>
+                                // <option value="heb11x5">河北11选5 - 高频</option>
+                                // <option value="hlj11x5">黑龙江11选5(幸运) - 高频</option>
+                                // <option value="hub11x5">湖北11选5 - 高频</option>
+                                // <option value="jl11x5">吉林11选5 - 高频</option>
+                                // <option value="js11x5">江苏11选5 - 高频</option>
+                                // <option value="jx11x5">江西11选5(多乐彩) - 高频</option>
+                                // <option value="ln11x5">辽宁11选5 - 高频</option>
+                                // <option value="nmg11x5">内蒙古11选5 - 高频</option>
+                                // <option value="sd11x5">山东11选5(十一运夺金) - 高频</option>
+                                // <option value="sh11x5">上海11选5 - 高频</option>
+                                // <option value="sxl11x5">陕西11选5 - 高频</option>
+                                // <option value="sxr11x5">山西11选5 - 高频</option>
+                                // <option value="tj11x5">天津11选5 - 高频</option>
+                                // <option value="xj11x5">新疆11选5 - 高频</option>
+                                // <option value="yn11x5">云南11选5 - 高频</option>
+                                // <option value="zj11x5">浙江11选5 - 高频</option>
+                                // <option value="ahk3">安徽快三 - 高频</option>
+                                // <option value="bjk3">北京快三 - 高频</option>
+                                // <option value="fjk3">福建快三 - 高频</option>
+                                // <option value="gsk3">甘肃快三 - 高频</option>
+                                // <option value="gxk3">广西快三(好运) - 高频</option>
+                                // <option value="gzk3">贵州快三 - 高频</option>
+                                // <option value="hebk3">河北快三 - 高频</option>
+                                // <option value="hubk3">湖北快三 - 高频</option>
+                                // <option value="jlk3">吉林快三 - 高频</option>
+                                // <option value="jsk3">江苏快三 - 高频</option>
+                                // <option value="jxk3">江西快三 - 高频</option>
+                                // <option value="nmgk3">内蒙古快三 - 高频</option>
+                                // <option value="shk3">上海快三 - 高频</option>
+                                // <option value="cqklsf">重庆快乐十分(幸运农场) - 高频</option>
+                                // <option value="gdklsf">广东快乐十分 - 高频</option>
+                                // <option value="gxklsf">广西快乐十分 - 高频</option>
+                                // <option value="hljklsf">黑龙江快乐十分 - 高频</option>
+                                // <option value="hunklsf">湖南快乐十分(动物总动员) - 高频</option>
+                                // <option value="sxlklsf">陕西快乐十分 - 高频</option>
+                                // <option value="sxrklsf">山西快乐十分 - 高频</option>
+                                // <option value="tjklsf">天津快乐十分 - 高频</option>
+                                // <option value="ynklsf">云南快乐十分 - 高频</option>
+                                // <option value="lnkl12">辽宁快乐十二 - 高频</option>
+                                // <option value="sckl12">四川快乐十二 - 高频</option>
+                                // <option value="zjkl12">浙江快乐十二 - 高频</option>
+                                // <option value="cqssc">重庆时时彩 - 高频</option>
+                                // <option value="hljssc">黑龙江时时彩 - 高频</option>
+                                // <option value="tjssc">天津时时彩 - 高频</option>
+                                // <option value="xjssc">新疆时时彩 - 高频</option>
+                                // <option value="ynssc">云南时时彩 - 高频</option>
+                                // <option value="bjkl8">北京快乐8 - 高频</option>
+                                // <option value="bjpk10">北京赛车(pk10) - 高频</option>
+                                // <option value="bjkzc">北京快中彩 - 高频</option>
+                                // <option value="henytdj">河南泳坛夺金(481) - 高频</option>
+                                // <option value="hunxysc">湖南幸运赛车 - 高频</option>
+                                // <option value="scjql">四川金七乐 - 高频</option>
+                                // <option value="sdklpk3">山东快乐扑克3 - 高频</option>
+                                // <option value="sdqyh">山东群英会 - 高频</option>
+                                // <option value="shssl">上海时时乐 - 高频</option>
+                                // <option value="sxrytdj">山西泳坛夺金(481) - 高频</option>
+                                // <option value="xjxlc">新疆喜乐彩 - 高频</option>
+                                // <option value="inffc5">印尼时时彩(五分彩) - 高频</option>
+                                // <option value="viffc5">越南河内时时彩(快5) - 高频</option>
+                                // <option value="aukeno">澳洲快乐8(act) - 高频</option>
+                                // <option value="cakeno">加拿大卑斯快乐8 - 高频</option>
+                                // <option value="cwkeno">加拿大西部快乐8 - 高频</option>
+                                // <option value="twbingo">台湾宾果 - 高频</option>
+                                // <option value="mlaft">马耳他幸运飞艇 - 高频</option>
+                                // <option value="df6j1">七省东方6+1</option>
+                                // <option value="fjtc22x5">福建体彩22选5</option>
+                                // <option value="fjtc36x7">福建体彩36选7</option>
+                                // <option value="gdfc26x5">广东南粤风采26选5</option>
+                                // <option value="gdfc36x5">广东南粤风采36选7</option>
+                                // <option value="gdfchc1">广东南粤风采好彩1</option>
+                                // <option value="gdszfc">广东深圳风采</option>
+                                // <option value="gxklsc">广西快乐双彩</option>
+                                // <option value="hd15x5">七省华东15选5</option>
+                                // <option value="hljfc22x5">黑龙江龙江风彩22选5</option>
+                                // <option value="hljtc6j1">黑龙江体彩6+1</option>
+                                // <option value="jstc7ws">江苏体彩7位数</option>
+                                // <option value="lnfc35x7">辽宁辽宁风采35选7</option>
+                                // <option value="shttcx4">上海天天彩选4</option>
+                                // <option value="xjfc18x7">新疆新疆风采18选7</option>
+                                // <option value="xjfc25x7">新疆新疆风采25选7</option>
+                                // <option value="xjfc35x7">新疆新疆风采35选7</option>
+                                // <option value="yzfc20x5">河北燕赵风采20选5</option>
+                                // <option value="yzfchyc2">河北燕赵风采好运彩2</option>
+                                // <option value="yzfchyc3">河北燕赵风采好运彩3</option>
+                                // <option value="yzfcpl5">河北燕赵风采排列5</option>
+                                // <option value="yzfcpl7">河北燕赵风采排列7</option>
+                                // <option value="zyfc22x5">河南中原风采22选5</option>
+                            ];
+                            $responseContent = implode("\n", $data)
+                            return new Text($responseContent);
+                        }
+
                         $code = 'dlt';
                         $rows = 10;
                         $format = 'json';
