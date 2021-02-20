@@ -666,7 +666,7 @@ class WeChatController extends Controller
                         //         echo "开奖号码：{$opencode}<br/>";
                         //         echo "开奖时间：{$opentime}<br/>";
                         //         echo '<br/>';
-                        //         //TODO: 分析数据、对比数据，并写入数据库
+                        //         // 分析数据、对比数据，并写入数据库
                         //     }
                         // } else {
                         //     echo "采集失败，返回提示：<br/>";
