@@ -1100,6 +1100,7 @@ class WeChatController extends Controller
         ]));
         $count = $this->count($openId);
         $msgTemp = "%s，登录成功！\n这是你第%s次登录，玩的开心！";
+        Log::info('subscribe 事件:' . sprintf($msgTemp, $user['nickname'], $count));
         return sprintf($msgTemp, $user['nickname'], $count);
     }
 
@@ -1112,6 +1113,7 @@ class WeChatController extends Controller
         $openId = $message['FromUserName'];
         $client = new Client();
         $client->del(['SWOOLE::WECHAT::'.$openId]);
+        Log::info('unsubscribe 事件:' . $openId);
     }
 
     /**
@@ -1132,6 +1134,7 @@ class WeChatController extends Controller
         $count = $this->count($openId);
 
         $msgTemp = "%s，欢迎回来！\n这是你第%s次登录，玩的开心！";
+        Log::info('scan 事件:' . sprintf($msgTemp, $user['nickname'], $count));
         return sprintf($msgTemp, $user['nickname'], $count);
     }
 
