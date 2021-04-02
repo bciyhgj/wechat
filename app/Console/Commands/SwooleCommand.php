@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Log;
 
 class SwooleCommand extends Command
 {
@@ -72,6 +73,8 @@ class SwooleCommand extends Command
         $server->on('open', function (\swoole_websocket_server $server, $request) use ($app){
             // $app = Factory::officialAccount($config['wechat']);
             $result = $app->qrcode->temporary($request->fd, 6 * 24 * 3600);
+            Log::info('result.');
+            Log::info($result);
             $url = $app->qrcode->url($result['ticket']);
             $server->push($request->fd, json_encode([
                 'message_type'    =>  'qrcode_url',
