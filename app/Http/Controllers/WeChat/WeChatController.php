@@ -7,6 +7,7 @@ use EasyWeChat\Kernel\Messages\Image;
 use EasyWeChat\Kernel\Messages\Text;
 use EasyWeChat\Kernel\Messages\Video;
 use EasyWeChat\Kernel\Messages\Voice;
+use Predis\Client;
 use Log;
 
 class WeChatController extends Controller
@@ -457,6 +458,9 @@ class WeChatController extends Controller
                         $user_info['country']        = $user['country'];
                         $user_info['is_subscribe']   = 1;
 
+                        // 将关注事件封装成函数
+                        return $this->subscribe($message);
+
                         // if (WxStudent::weixin_attention($user_info)) {
                         //     return '欢迎关注';
                         // } else {
@@ -464,12 +468,16 @@ class WeChatController extends Controller
                         // }
                         return '欢迎关注';
                     } else if ($message['Event'] == 'unsubscribe') {
+                        return $this->unsubscribe($message);
+
                         //取消关注时执行的操作，（注意下面返回的信息用户不会收到，因为你已经取消关注，但别的操作还是会执行的<如：取消关注的时候，要把记录该用户从记录微信用户信息的表中删掉>）
                         // if (WxStudent::weixin_cancel_attention($user_openid)) {
                         // return '已取消关注';
                         // }
 
                         return '已取消关注';
+                    } else if（$message['Event'] == 'SCAN'）{
+                        return $this->scan($message);
                     }
                     return '收到事件消息';
                     break;
@@ -1073,6 +1081,83 @@ class WeChatController extends Controller
         // 我这里是直接调用了它的 send() 方法，它就是直接输出（echo）了，我们在一些框架就不能直接输出了，那你就直接拿到 Response 实例后做相应的操作即可，比如 Laravel 里你就可以直接 return $app->server->serve();
 
         return $app->server->serve();
+    }
+
+    /**
+     * [subscribe 扫码登录-关注处理]
+     * @param  [type] $message [description]
+     * @return [type]          [description]
+     */
+    public function subscribe($message){
+        $eventKey = intval(str_replace('qrscene_', '', $message['EventKey']));
+        $openId = $message['FromUserName'];
+        $user = $this->app->user->get($openId);
+        $this->notify(json_encode([
+            'type'  =>  'scan',
+            'fd'    =>  $eventKey,
+            'nickname'  =>  $user['nickname']
+        ]));
+        $count = $this->count($openId);
+        $msgTemp = "%s，登录成功！\n这是你第%s次登录，玩的开心！";
+        return sprintf($msgTemp, $user['nickname'], $count);
+    }
+
+    /**
+     * [unsubscribe 扫码登录-取消关注处理]
+     * @param  [type] $message [description]
+     * @return [type]          [description]
+     */
+    public function unsubscribe($message){
+        $openId = $message['FromUserName'];
+        $client = new Client();
+        $client->del(['SWOOLE::WECHAT::'.$openId]);
+    }
+
+    /**
+     * [scan 扫码登录-扫码处理]
+     * @param  [type] $message [description]
+     * @return [type]          [description]
+     */
+    public function scan($message){
+        $eventKey = $message['EventKey'];
+        $openId = $message['FromUserName'];
+
+        $user = $this->app->user->get($openId);
+        $this->notify(json_encode([
+            'type'  =>  'scan',
+            'fd'    =>  $eventKey,
+            'nickname'  =>  $user['nickname']
+        ]));
+        $count = $this->count($openId);
+
+        $msgTemp = "%s，欢迎回来！\n这是你第%s次登录，玩的开心！";
+        return sprintf($msgTemp, $user['nickname'], $count);
+    }
+
+    /**
+     * [notify 扫码登录-通知]
+     * @param  [type] $message [description]
+     * @return [type]          [description]
+     */
+    public function notify($message){
+        $client = new \swoole_client(SWOOLE_SOCK_TCP);
+        if (!$client->connect('127.0.0.1', config('swoole-wechat.notify_port'), -1)) {
+            return "connect failed. Error: {$client->errCode}\n";
+        }
+        $ret = $client->send($message);
+        $client->close();
+
+        return $ret;
+    }
+
+    /**
+     * [notify 扫码登录-登录次数统计]
+     * @param  [type] $openId [description]
+     * @return [type]         [description]
+     */
+    public function count($openId){
+        $client = new Client();
+        return $client->incr('SWOOLE::WECHAT::'.$openId);
     }
 
     /**
