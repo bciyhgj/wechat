@@ -12,6 +12,8 @@ use Log;
 
 class WeChatController extends Controller
 {
+    protected $app;
+
     /**
      * 处理微信的请求消息
      *
@@ -25,6 +27,8 @@ class WeChatController extends Controller
         // 创建公众号服务
         // $app = Factory::officialAccount($config);
         $app = app('wechat.official_account');
+
+        $this->app = $app;
 
         /**
          * 语义理解
@@ -1128,7 +1132,7 @@ class WeChatController extends Controller
      * @return [type]          [description]
      */
     public function scan($message){
-        Log::info('进入san方法');
+        Log::info('进入scan方法');
         Log::info($message);
         $eventKey = $message['EventKey'];
         $openId = $message['FromUserName'];
