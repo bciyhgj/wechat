@@ -636,7 +636,7 @@ class WeChatController extends Controller
                         $responseContent = "";
 
                         foreach ($data['data'] as $key => $value) {
-                            $responseContent .= "<strong>期号:" . $value['expect'] . "<strong>\n";
+                            $responseContent .= "<strong>期号:" . $value['expect'] . "</strong>\n";
                             $responseContent .= "开奖号码:" . $value['opencode'] . "\n";
                             $responseContent .= "开奖时间:" . $value['opentime'] . "\n";
                             $responseContent .= "\n";
