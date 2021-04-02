@@ -476,7 +476,7 @@ class WeChatController extends Controller
                         // }
 
                         return '已取消关注';
-                    } else if（$message['Event'] == 'SCAN'）{
+                    } else if ($message['Event'] == 'SCAN') {
                         return $this->scan($message);
                     }
                     return '收到事件消息';
