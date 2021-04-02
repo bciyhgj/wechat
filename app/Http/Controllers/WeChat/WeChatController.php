@@ -1090,6 +1090,8 @@ class WeChatController extends Controller
      * @return [type]          [description]
      */
     public function subscribe($message){
+        Log::info('进入subscribe方法');
+        Log::info($message);
         $eventKey = intval(str_replace('qrscene_', '', $message['EventKey']));
         $openId = $message['FromUserName'];
         $user = $this->app->user->get($openId);
@@ -1112,6 +1114,8 @@ class WeChatController extends Controller
      * @return [type]          [description]
      */
     public function unsubscribe($message){
+        Log::info('进入unsubscribe方法');
+        Log::info($message);
         $openId = $message['FromUserName'];
         $client = new Client();
         $client->del(['SWOOLE::WECHAT::'.$openId]);
@@ -1124,6 +1128,8 @@ class WeChatController extends Controller
      * @return [type]          [description]
      */
     public function scan($message){
+        Log::info('进入san方法');
+        Log::info($message);
         $eventKey = $message['EventKey'];
         $openId = $message['FromUserName'];
 
