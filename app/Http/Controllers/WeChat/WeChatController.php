@@ -426,6 +426,7 @@ class WeChatController extends Controller
 
             switch ($message['MsgType']) {
                 case 'event':
+                    Log::info('事件类型:' . $message['Event']);
                     // 事件：
                     // - Event       事件类型 （如：subscribe(订阅)、unsubscribe(取消订阅) ...， CLICK 等）
 
