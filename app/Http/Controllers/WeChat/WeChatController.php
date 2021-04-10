@@ -495,6 +495,65 @@ class WeChatController extends Controller
                     $responseContent = '';
                     $content         = trim($message['Content']);
 
+                    Log::info($content);
+
+                    $msg = $content;
+                    // 判断是否为淘宝链接
+                    if (preg_match("/【.*】/u", $msg, $match) && (strstr($msg, "打开👉手机淘宝👈") || strstr($msg, "打开👉天猫APP👈") || strstr($msg, "打开👉手淘👈") || strstr($msg, "👉淘♂寳♀👈"))) {
+                        try {
+                            $url = '';
+                            $content = '';
+                            $content = str_replace('【', '', $match[0]);
+                            $content = str_replace('】', '', $content);
+                            if (strstr($msg, "打开👉天猫APP👈")) {
+                                if (preg_match("/http:\/\/.* \)/", $msg, $match)) {
+                                    $url = str_replace(' )', '', $match[0]);
+                                }
+                            } else {
+                                if (preg_match("/http:\/\/.* /", $msg, $match)) {
+                                    $url = str_replace(' ', '', $match[0]);
+                                }
+                            }
+
+                            // 20170909新版淘宝分享中没有链接， 感谢网友jindx0713（https://github.com/jindx0713）提供代码和思路，现在使用第三方网站 http://www.taokouling.com 根据淘口令获取url
+                            if (!$url) {
+                                $taokoulingUrl = 'http://www.taokouling.com/index.php?m=api&a=taokoulingjm';
+                                $taokouling = '';
+                                if (preg_match("/€.*?€/", $msg, $match)) {
+                                    $taokouling = $match[0];
+                                } else {
+                                    preg_match("/￥.*?￥/", $msg, $match);
+                                    $taokouling = $match[0];
+                                }
+                                $parms = ['username' => 'wx_tb_fanli', 'password' => 'wx_tb_fanli', 'text' => $taokouling];
+                                $result = curl_post_https($taokoulingUrl, $parms);
+                                $result = json_decode($result, true);
+
+                                if (isset($result['url'])) {
+                                    $url = str_replace('https://', 'http://', $result['url']);
+                                }
+                            }
+
+                            if (!$url) {
+                                $client = new \swoole_client(SWOOLE_SOCK_TCP);
+                                if (!$fp = $client->connect('127.0.0.1', config('swoole-wechat.notify_port'), -1)) {
+                                    return "connect failed. Error: {$fp->errMsg}[{$fp->errCode}]\n";
+                                }
+                                $message = [
+                                    'typt' => 'taobaoke',
+                                    'url' => $url,
+                                ];
+                                $message = json_encode($message);
+                                $client->send($message);
+                                $result = $client->recv();
+                                var_dump($result);
+                                $client->close();
+                            }
+                        } catch (Exception $e) {
+
+                        }
+                    }
+
                     // 判断是否为彩票
                     $keywords = explode('+', $content);
                     if ($keywords[0] == '彩票') {
@@ -1093,7 +1152,8 @@ class WeChatController extends Controller
      * @param  [type] $message [description]
      * @return [type]          [description]
      */
-    public function subscribe($message){
+    public function subscribe($message)
+    {
         Log::info('进入subscribe方法');
         Log::info($message);
         $eventKey = intval(str_replace('qrscene_', '', $message['EventKey']));
@@ -1117,7 +1177,8 @@ class WeChatController extends Controller
      * @param  [type] $message [description]
      * @return [type]          [description]
      */
-    public function unsubscribe($message){
+    public function unsubscribe($message)
+    {
         Log::info('进入unsubscribe方法');
         Log::info($message);
         $openId = $message['FromUserName'];
@@ -1131,7 +1192,8 @@ class WeChatController extends Controller
      * @param  [type] $message [description]
      * @return [type]          [description]
      */
-    public function scan($message){
+    public function scan($message)
+    {
         Log::info('进入scan方法');
         Log::info($message);
         $eventKey = $message['EventKey'];
@@ -1157,7 +1219,8 @@ class WeChatController extends Controller
      * @param  [type] $message [description]
      * @return [type]          [description]
      */
-    public function notify($message){
+    public function notify($message)
+    {
         $client = new \swoole_client(SWOOLE_SOCK_TCP);
         if (!$client->connect('127.0.0.1', config('swoole-wechat.notify_port'), -1)) {
             return "connect failed. Error: {$client->errCode}\n";
@@ -1173,13 +1236,14 @@ class WeChatController extends Controller
      * @param  [type] $openId [description]
      * @return [type]         [description]
      */
-    public function count($openId){
+    public function count($openId)
+    {
         $client = new Client();
         return $client->incr('SWOOLE::WECHAT::'.$openId);
     }
 
     /**
-     * [receiver 开放平台全网发布]
+     * [receiver 开放平台全网发布-未使用]
      * @param  [type] $app_id [description]
      * @return [type]         [description]
      */
