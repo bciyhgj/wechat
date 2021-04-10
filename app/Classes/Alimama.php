@@ -157,9 +157,9 @@ class Alimama
         /**
          * 打印日志
          */
-        echo "getScanQrStatus:";
-        echo $url;
-        echo "\r\n";
+        // echo "getScanQrStatus:";
+        // echo $url;
+        // echo "\r\n";
 
         $headers = [
             'method' => 'GET',
