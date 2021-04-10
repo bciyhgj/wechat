@@ -92,7 +92,7 @@ class SwooleCommand extends Command
             echo "Start\n";
             $this->alimama = new Alimama();
             // 登录
-            $this->login();
+            $this->alimama->login();
         });
 
         $this->server->on('connect', function ($server, $fd, $from_id) {
