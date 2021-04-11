@@ -93,6 +93,7 @@ class SwooleCommand extends Command
             $this->alimama = new Alimama();
             // 登录
             $this->alimama->login();
+            $server->alimama = $this->alimama;
         });
 
         $this->server->on('connect', function ($server, $fd, $from_id) {
@@ -113,8 +114,8 @@ class SwooleCommand extends Command
 
         $tcpServer = $this->server->addListener('0.0.0.0', config('swoole-wechat.notify_port'), SWOOLE_SOCK_TCP);
         $tcpServer->set([]);
-        $alimama = $this->alimama;
-        $tcpServer->on('receive', function ($serv, $fd, $threadId, $data) use ($alimama) {
+        // $alimama = $this->alimama;
+        $tcpServer->on('receive', function ($serv, $fd, $threadId, $data) {
             $data = json_decode($data, true);
             if ($data['type'] == 'taobaoke') {
                 $url = $data['url'];
@@ -123,7 +124,7 @@ class SwooleCommand extends Command
                  * 淘口令处理
                  */
                 // 获得真实链接
-                $realUrl = $alimama->getRealUrl($url);
+                $realUrl = $serv->alimama->getRealUrl($url);
 
                 // 打印日志
                 echo "realUrl:";
@@ -131,7 +132,7 @@ class SwooleCommand extends Command
                 echo "\r\n";
 
                 // 获得详情
-                $detail = $alimama->getDetail($realUrl);
+                $detail = $serv->alimama->getDetail($realUrl);
 
                 if ($detail != 'no match item') {
                     $auctionId = $detail['auctionId'];
@@ -141,7 +142,7 @@ class SwooleCommand extends Command
                     $fx = ($price - $couponAmount) * $tkRate / 100;
 
                     // 获得淘宝客链接
-                    $result = $alimama->getTkLink($auctionId);
+                    $result = $serv->alimama->getTkLink($auctionId);
                     $taoToken = $result['taoToken'];
                     $shortLink = $result['shortLinkUrl'];
                     $couponLink = $result['couponLink'];
