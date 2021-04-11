@@ -78,6 +78,12 @@ class SwooleCommand extends Command
 
     public function start()
     {
+
+        // new alimama
+        $this->alimama = new Alimama();
+        // 登录
+        $this->alimama->login();
+
         $this->server = new \swoole_server("0.0.0.0", config('swoole-wechat.ws_port'));
 
         $this->server->set([
@@ -90,10 +96,6 @@ class SwooleCommand extends Command
 
         $this->server->on('start', function ($server) {
             echo "Start\n";
-            $this->alimama = new Alimama();
-            // 登录
-            $this->alimama->login();
-            $server->alimama = $this->alimama;
         });
 
         $this->server->on('connect', function ($server, $fd, $from_id) {
@@ -114,7 +116,6 @@ class SwooleCommand extends Command
 
         $tcpServer = $this->server->addListener('0.0.0.0', config('swoole-wechat.notify_port'), SWOOLE_SOCK_TCP);
         $tcpServer->set([]);
-        // $alimama = $this->alimama;
         $tcpServer->on('receive', function ($serv, $fd, $threadId, $data) {
             $data = json_decode($data, true);
             if ($data['type'] == 'taobaoke') {
@@ -124,7 +125,7 @@ class SwooleCommand extends Command
                  * 淘口令处理
                  */
                 // 获得真实链接
-                $realUrl = $serv->alimama->getRealUrl($url);
+                $realUrl = $this->alimama->getRealUrl($url);
 
                 // 打印日志
                 echo "realUrl:";
@@ -132,7 +133,7 @@ class SwooleCommand extends Command
                 echo "\r\n";
 
                 // 获得详情
-                $detail = $serv->alimama->getDetail($realUrl);
+                $detail = $this->alimama->getDetail($realUrl);
 
                 if ($detail != 'no match item') {
                     $auctionId = $detail['auctionId'];
@@ -142,7 +143,7 @@ class SwooleCommand extends Command
                     $fx = ($price - $couponAmount) * $tkRate / 100;
 
                     // 获得淘宝客链接
-                    $result = $serv->alimama->getTkLink($auctionId);
+                    $result = $this->alimama->getTkLink($auctionId);
                     $taoToken = $result['taoToken'];
                     $shortLink = $result['shortLinkUrl'];
                     $couponLink = $result['couponLink'];
