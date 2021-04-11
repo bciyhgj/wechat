@@ -545,6 +545,7 @@ class WeChatController extends Controller
                                 }
                                 $message = [
                                     'type' => 'taobaoke',
+                                    'content' => $content,
                                     'url' => $url,
                                 ];
                                 $message = json_encode($message);

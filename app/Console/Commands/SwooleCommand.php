@@ -120,6 +120,7 @@ class SwooleCommand extends Command
             $data = json_decode($data, true);
             if ($data['type'] == 'taobaoke') {
                 $url = $data['url'];
+                $content = $data['content'];
 
                 /**
                  * 淘口令处理
