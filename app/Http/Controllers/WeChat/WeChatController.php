@@ -507,15 +507,15 @@ class WeChatController extends Controller
                             $content = '';
                             $content = str_replace('【', '', $match[0]);
                             $content = str_replace('】', '', $content);
-                            if (strstr($msg, "打开👉天猫APP👈")) {
-                                if (preg_match("/http:\/\/.* \)/", $msg, $match)) {
-                                    $url = str_replace(' )', '', $match[0]);
-                                }
-                            } else {
-                                if (preg_match("/http:\/\/.* /", $msg, $match)) {
-                                    $url = str_replace(' ', '', $match[0]);
-                                }
-                            }
+                            // if (strstr($msg, "打开👉天猫APP👈")) {
+                            //     if (preg_match("/http:\/\/.* \)/", $msg, $match)) {
+                            //         $url = str_replace(' )', '', $match[0]);
+                            //     }
+                            // } else {
+                            //     if (preg_match("/http:\/\/.* /", $msg, $match)) {
+                            //         $url = str_replace(' ', '', $match[0]);
+                            //     }
+                            // }
 
                             // 20170909新版淘宝分享中没有链接， 感谢网友jindx0713（https://github.com/jindx0713）提供代码和思路，现在使用第三方网站 http://www.taokouling.com 根据淘口令获取url
                             if (!$url) {
@@ -536,13 +536,15 @@ class WeChatController extends Controller
                                 }
                             }
 
-                            if (!$url) {
+                            Log::info('taobao link ' . $url);
+
+                            if ($url) {
                                 $client = new \swoole_client(SWOOLE_SOCK_TCP);
                                 if (!$fp = $client->connect('127.0.0.1', config('swoole-wechat.notify_port'), -1)) {
                                     return "connect failed. Error: {$fp->errMsg}[{$fp->errCode}]\n";
                                 }
                                 $message = [
-                                    'typt' => 'taobaoke',
+                                    'type' => 'taobaoke',
                                     'url' => $url,
                                 ];
                                 $message = json_encode($message);
