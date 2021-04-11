@@ -41,6 +41,7 @@ class SwooleCommand extends Command
      */
     public function __construct()
     {
+        opcache_reset();
         parent::__construct();
     }
 
@@ -78,7 +79,6 @@ class SwooleCommand extends Command
 
     public function start()
     {
-
         // new alimama
         $this->alimama = new Alimama();
         // 登录

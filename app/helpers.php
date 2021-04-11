@@ -56,8 +56,16 @@ if (!function_exists('curl_get_https')) {
         // 官方文档描述是“发送请求的字符串”，其实就是请求的header。这个就是直接查看请求header，因为上面允许查看
         $info = curl_getinfo($curl, CURLINFO_HEADER_OUT);
         $errno = curl_errno($curl);
-        // var_dump($errno);
-        // var_dump($info);
+
+        /**
+         * 打印日志
+         */
+        if ($errno) {
+            // 捕抓异常
+            echo 'Errno' . $errno;
+            var_dump($info);
+        }
+
         // 执行命令
         $tmpInfo = curl_exec($curl);
         //关闭URL请求
@@ -110,8 +118,16 @@ if (!function_exists('curl_get_http')) {
         // 官方文档描述是“发送请求的字符串”，其实就是请求的header。这个就是直接查看请求header，因为上面允许查看
         $info = curl_getinfo($curl, CURLINFO_HEADER_OUT);
         $errno = curl_errno($curl);
-        // var_dump($errno);
-        // var_dump($info);
+
+        /**
+         * 打印日志
+         */
+        if ($errno) {
+            // 捕抓异常
+            echo 'Errno' . $errno;
+            var_dump($info);
+        }
+
         // 执行命令
         $tmpInfo = curl_exec($curl);
         //关闭URL请求
@@ -166,6 +182,8 @@ if (!function_exists('curl_post_https')) {
         if (curl_errno($curl)) {
             // 捕抓异常
             echo 'Errno'.curl_error($curl);
+            $info = curl_getinfo($curl, CURLINFO_HEADER_OUT);
+            var_dump($info);
         }
         // 关闭CURL会话
         curl_close($curl);
