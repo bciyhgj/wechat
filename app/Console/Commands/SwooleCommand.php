@@ -118,11 +118,6 @@ class SwooleCommand extends Command
             if ($data['type'] == 'taobaoke') {
                 $url = $data['url'];
 
-                // 打印日志
-                echo "url:";
-                echo $realUrl;
-                echo "\r\n";
-
                 /**
                  * 淘口令处理
                  */
