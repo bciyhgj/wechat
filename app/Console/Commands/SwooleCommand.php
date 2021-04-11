@@ -135,6 +135,13 @@ class SwooleCommand extends Command
                 // 获得详情
                 $detail = $this->alimama->getDetail($realUrl);
 
+                // 结果
+                $result = [];
+                // 优惠券链接
+                $couponLink = '';
+                // 响应的内容
+                $responseText = '';
+
                 if ($detail != 'no match item') {
                     $auctionId = $detail['auctionId'];
                     $couponAmount = $detail['couponAmount'];
@@ -148,7 +155,7 @@ class SwooleCommand extends Command
                     $shortLink = $result['shortLinkUrl'];
                     $couponLink = $result['couponLink'];
                 }
-                if ($couponLink != '') {
+                if ($result && $couponLink != '') {
                     $couponToken = $result['couponLinkTaoToken'];
                     $responseText = <<<EOT
 %s
@@ -161,7 +168,7 @@ EOT;
                     $responseText = sprintf($responseText, $content, $fx, $couponAmount, $couponToken, $shortLink);
                     echo $responseText;
 
-                } else {
+                } else if ($result && $couponLink == '') {
                     $responseText = <<<EOT
 %s
 【返现】%.2f元
@@ -171,7 +178,15 @@ EOT;
 【下单地址】%s
 EOT;
                     $responseText = sprintf($responseText, $content, $fx, $couponAmount, $taoToken, $shortLink);
-                    $responseText;
+                    echo $responseText;
+                } else {
+                    $responseText = <<<EOT
+%s
+-----------------
+该宝贝暂时没有找到内部返利通道！亲您可以换个宝贝试试，也可以联系我们的管理员帮着寻找有返现的类似商品
+EOT;
+                    $responseText = sprintf($responseText, $content);
+                    echo $responseText;
                 }
 
                 $serv->push($fd, json_encode([
