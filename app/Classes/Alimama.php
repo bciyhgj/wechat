@@ -443,17 +443,18 @@ class Alimama
                 'accept-language' => 'zh,en-US;q=0.8,en;q=0.6,zh-CN;q=0.4,zh-TW;q=0.2',
             ];
             $result = curl_get_https($url, $headers);
-            $result = json_decode($result, true);
 
             /**
              * 打印日志
              */
             echo "getDetail url:";
             echo $url;
+            echo "\r\n";
             echo "get_detail:";
             echo "\r\n";
             var_dump($result);
             echo "\r\n";
+            $result = json_decode($result, true);
 
             if (isset($result['data']) && isset($result['data']['pageList']) && count($result['data']['pageList']) > 0) {
                 return $result['data']['pageList'][0];
