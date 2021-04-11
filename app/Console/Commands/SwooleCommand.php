@@ -102,7 +102,7 @@ class SwooleCommand extends Command
             // $serv->send( $fd, "Hello {$fd}!" );
         });
 
-        $this->server->on('receive', function (swoole_server $server, $fd, $from_id, $data) {
+        $this->server->on('receive', function (\swoole_server $server, $fd, $from_id, $data) {
             echo "Get Message From Client {$fd}:{$data}\n";
             // $server->push($request->fd, json_encode([
             //     'message_type'    =>  'qrcode_url',
@@ -116,7 +116,7 @@ class SwooleCommand extends Command
 
         $tcpServer = $this->server->addListener('0.0.0.0', config('swoole-wechat.notify_port'), SWOOLE_SOCK_TCP);
         $tcpServer->set([]);
-        $tcpServer->on('receive', function (swoole_server $serv, $fd, $threadId, $data) {
+        $tcpServer->on('receive', function (\swoole_server $serv, $fd, $threadId, $data) {
             $data = json_decode($data, true);
             if ($data['type'] == 'taobaoke') {
                 $url = $data['url'];
