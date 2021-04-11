@@ -116,7 +116,7 @@ class SwooleCommand extends Command
 
         $tcpServer = $this->server->addListener('0.0.0.0', config('swoole-wechat.notify_port'), SWOOLE_SOCK_TCP);
         $tcpServer->set([]);
-        $tcpServer->on('receive', function ($serv, $fd, $threadId, $data) {
+        $tcpServer->on('receive', function (swoole_server $serv, $fd, $threadId, $data) {
             $data = json_decode($data, true);
             if ($data['type'] == 'taobaoke') {
                 $url = $data['url'];
