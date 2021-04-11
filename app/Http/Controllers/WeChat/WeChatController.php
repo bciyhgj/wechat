@@ -501,6 +501,7 @@ class WeChatController extends Controller
                     // 判断是否为淘宝链接
                     // if (preg_match("/【.*】/u", $msg, $match) && (strstr($msg, "打开👉手机淘宝👈") || strstr($msg, "打开👉天猫APP👈") || strstr($msg, "打开👉手淘👈") || strstr($msg, "👉淘♂寳♀👈"))) {
                     if (preg_match("/【.*】/u", $msg, $match) && (preg_match("/打开👉手机淘宝👈/u", $msg) || preg_match("/打开👉天猫APP👈/u", $msg) || preg_match("/打开👉手淘👈/u", $msg) || preg_match("/👉淘♂寳♀👈/u", $msg))) {
+                        Log::info('taobao link');
                         try {
                             $url = '';
                             $content = '';
@@ -527,7 +528,7 @@ class WeChatController extends Controller
                                     $taokouling = $match[0];
                                 }
                                 $parms = ['username' => 'wx_tb_fanli', 'password' => 'wx_tb_fanli', 'text' => $taokouling];
-                                $result = curl_post_https($taokoulingUrl, $parms);
+                                $result = curl_post_https($taokoulingUrl, null, $parms);
                                 $result = json_decode($result, true);
 
                                 if (isset($result['url'])) {
