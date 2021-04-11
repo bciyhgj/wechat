@@ -448,9 +448,12 @@ class Alimama
             /**
              * 打印日志
              */
+            echo "getDetail url:";
+            echo $url;
             echo "get_detail:";
             echo "\r\n";
             var_dump($result);
+            echo "\r\n";
 
             if (isset($result['data']) && isset($result['data']['pageList']) && count($result['data']['pageList']) > 0) {
                 return $result['data']['pageList'][0];
@@ -558,6 +561,10 @@ class Alimama
 
         $pvid = sprintf('10_%s_1686_%s', $this->myIp, $t);
 
+        echo "getTkLink:";
+        echo implode(",", [$auctionId, $tbToken, $pvid]);
+        echo "\r\n";
+
         try {
             list($gcId, $siteId, $adzoneId) = $this->__get_tk_link_s1($auctionId, $tbToken, $pvid);
             $this->__get_tk_link_s2($gcId, $siteId, $adzoneId, $auctionId, $tbToken, $pvid);
@@ -590,14 +597,19 @@ class Alimama
             'Accept-Language' => 'zh,en-US;q=0.8,en;q=0.6,zh-CN;q=0.4,zh-TW;q=0.2',
         ];
         $result = curl_get_https($url, $headers);
-        $result = json_decode($result, true);
 
         /**
          * 打印日志
          */
-        // echo 'tg获取推广位相关信息:';
-        // var_dump($result);
-        // echo "\r\n";
+        echo "__get_tk_link_s1 url:";
+        echo $url;
+        echo "\r\n";
+
+        echo 'tg获取推广位相关信息:';
+        var_dump($result);
+        echo "\r\n";
+
+        $result = json_decode($result, true);
 
         if (isset($result['data']) && isset($result['data']['otherList']) && count($result['data']['otherList']) > 0) {
             $gcId = $result['data']['otherList'][0]['gcid'];
@@ -652,6 +664,14 @@ class Alimama
         ];
 
         $result = curl_post_https($url, $headers, $data);
+
+        /**
+         * 打印日志
+         */
+        echo "__get_tk_link_s2 result:";
+        var_dump($result);
+        echo "\r\n";
+
         $result = json_decode($result);
         return $result;
     }
@@ -678,6 +698,14 @@ class Alimama
             'Accept-Language' => 'zh,en-US;q=0.8,en;q=0.6,zh-CN;q=0.4,zh-TW;q=0.2',
         ];
         $result = curl_get_https($url, $headers);
+
+        /**
+         * 打印日志
+         */
+        echo "__get_tk_link_s3 result:";
+        var_dump($result);
+        echo "\r\n";
+
         $result = json_decode($result, true);
         if (isset($result['data'])) {
             return $result['data'];
